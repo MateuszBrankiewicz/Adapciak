@@ -1,0 +1,13 @@
+
+@import 'tailwindcss';
+
+@theme {
+    --color-background: oklch(1 0 0);
+    --color-text: oklch(0 0 0);
+    --color-main-button-background: oklch(89.83% 0.2104 122.32);
+    --color-main-button-text: oklch(33.6% 0.0834 48.67);
+    --color-main-button-border: oklch(72.67% 0.18 123.83);
+    --color-secondary-button-background: oklch(79.46% 0.1574 66.21);
+    --color-secondary-button-text: oklch(13.76% 0.0163 81.12);
+    --color-secondary-button-border: oklch(13.76% 0.0163 81.12);
+  }
