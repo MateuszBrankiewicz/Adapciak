@@ -40,10 +40,10 @@ const InputComponent = <T extends FieldValues>({
             placeholder={placeholder}
             autoComplete={autocomplete}
             disabled={disabled}
-            className='bg-secondary-button-background border border-secondary-button-border text-secondary-button-text text-sm rounded-lg block w-full p-2.5'
+            className='bg-gray-200 border-secondary-button-border text-secondary-button-text text-sm rounded-lg block w-full p-2.5'
 
             />
-            {error && <p className='error'>{error.message}</p>}
+            {error && <p className='text-red-600'>{error.message}</p>}
         </div>
     );
 }

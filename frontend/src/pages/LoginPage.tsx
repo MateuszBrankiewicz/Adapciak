@@ -12,12 +12,17 @@ const LoginPage = () => {
     
     try {
       console.log(data);
-      axios.post('http://localhost:3000/login', {
+      const response = await axios.post('http://localhost:3000/login', {
         email,
         password
-      }).then((response) => {
-        console.log(response);
       });
+      if (response.status === 200) {
+        console.log(response);
+        const token = (response.data as { token: string }).token;
+        document.cookie = `token=${token}`
+        window.location.href = '/home';
+        alert("Zalogowano");
+      }
     
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
