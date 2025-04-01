@@ -39,7 +39,7 @@ const Form = <T extends FieldValues>({
             <h1 className='text-3xl font-bold '>{tittle}</h1>
             <form 
                 onSubmit={handleSubmit((data) => onSubmit(data, setError))}
-                className='container flex flex-col mt-20 justify-center items-center'
+                className='container flex flex-col mt-12 justify-center items-center'
             >
                 {children({ register, errors, setError, isSubmitting })}
             </form>

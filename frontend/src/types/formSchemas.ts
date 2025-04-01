@@ -29,10 +29,31 @@ const registerFormSchema = z.object({
     province: z.string().min(1, "Wojewodztwo jest wymagane"),
     city: z.string().min(1,"Miasto jest wymagane"),
     homeNumber: z.string().min(1,"Numer jest wymagany"),
-    phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)")
-
+    phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
+    firstName: z.string().min(1, "Imie jest wymagane"),
+    lastName: z.string().min(1,"Nazwusko jest wymagane")
 });
+const adsAddSchema = z.object({
+    title: z.string().min(1, "Nazwa jest wymagana"),
+    description: z.string().min(1, "Opis jest wymagany"),
+    location: z.string().min(1, "Lokalizacja jest wymagana"),
+    species: z.enum(["dog", "cat"], {
+        errorMap: () => ({ message: "Wybierz gatunek" }),
+    }),
+    age: z.enum(["puppy", "adult", "senior"], {
+        errorMap: () => ({ message: "Wybierz wiek" }),
+    }),
+    size: z.enum(["small", "medium", "large"], {
+        errorMap: () => ({ message: "Wybierz rozmiar" }),
+    }),
+    images: z.array(z.string()).min(1, "Dodaj przynajmniej jedno zdjęcie"),
+    contact: z.object({
+        email: z.string().email("Podaj poprawny adres e-mail"),
+        phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
+    }),
+});
+type AdsAddSchema = z.infer<typeof adsAddSchema>;
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
-export { loginFormSchema , registerFormSchema };
-export type { LoginFormSchema,  RegisterFormSchema};
+export { loginFormSchema , registerFormSchema, adsAddSchema};
+export type { LoginFormSchema,  RegisterFormSchema, AdsAddSchema };

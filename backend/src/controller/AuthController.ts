@@ -2,12 +2,20 @@
 import {Request,Response} from 'express'
 import User from "../model/User";
 import {registerUser,loginUser} from '../service/AuthService'
-import { SECRET_KEY } from '..';
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET || "Secret";
 import jwt from 'jsonwebtoken'
+import { validationResult } from 'express-validator';
+import { error } from 'console';
 
 
 export const login =  async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    res.status(401).json({errors:errors.array()});
+  }
   const {email, password} = req.body;
+
   try{
     const user = await loginUser(email,password);
     res.status(200).json({message : "Uzytkownik zalogowany",
@@ -63,4 +71,9 @@ export const checkLogged = async (req: Request, res: Response) => {
   }catch(err){
     res.status(400).json("False");
   }
+}
+export const logout = async (req: Request, res: Response) => {
+  
+  res.clearCookie('token');
+  res.status(200).json('Wylogowano pomyślnie');
 }

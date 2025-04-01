@@ -7,7 +7,7 @@ import axios from "axios";
 
 const RegisterPage = () => {
     const onSubmit = async (data: RegisterFormSchema, setError: UseFormSetError<RegisterFormSchema>) => {
-        const { email, password, confirmPassword, street, province, postalCode, homeNumber, city } = data;
+        const { email, password, confirmPassword, street, province, postalCode, homeNumber, city, firstName, lastName } = data;
         if (password !== confirmPassword) {
             setError('confirmPassword', {
                 message: 'Hasła nie są takie same.'
@@ -15,27 +15,31 @@ const RegisterPage = () => {
             return
         }
         try {
-            axios.post('http://localhost:3000/register', {
+            await axios.post('http://localhost:3000/user/register', {
                 email,
+                firstName,
+                lastName,
                 password,
                 street,
                 province,
                 postalCode,
                 homeNumber,
                 city
-            }).then((response) => {
-                console.log(response);
             });
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+               
+                alert("Udało się zalogować")
+                window.location.href="/login"
+            
         } catch (error) {
+            console.log("Tu error" + error);
             setError('email', {
-                message: 'Podano nieprawidłowy adres email lub hasło.'
+                message: 'Istnieje już konto z takim kontem email.'
             });
         }
     };
 
     return (
-        <div className='container flex items-center justify-center flex-col h-5/6 w-2/4 py-11 bg-gray-100 rounded-3xl backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-200 shadow-lg text-center'>
+        <div className='container flex items-center justify-center flex-col h-5/6 w-2/4 py-14 bg-gray-100 rounded-3xl backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-200 shadow-lg text-center'>
             <Form
                 schema={registerFormSchema}
                 onSubmit={onSubmit}
@@ -66,6 +70,27 @@ const RegisterPage = () => {
                             error={errors.confirmPassword}
                             name="confirmPassword"
                         />
+                        <div className="flex space-x-2">  
+                         <InputComponent
+                        register={register}
+                        type="text"
+                        label="Podaj imie"
+                        placeholder="Podaj imie"
+                        error={errors.firstName}
+                        name="firstName"
+                        >
+                        </InputComponent>
+                        <InputComponent
+                        register={register}
+                        type="text"
+                        label="Podaj nazwisko"
+                        placeholder="Podaj nazwisko"
+                        error={errors.lastName}
+                        name="lastName"
+                        ></InputComponent>
+
+                        </div>
+
                         <InputComponent
                         register={register}
                         type='text'
@@ -74,6 +99,7 @@ const RegisterPage = () => {
                         name="phone"
                         error={errors.phone}>
                         </InputComponent>
+                        <div className="flex space-x-2 ">
                         <InputComponent
                             register={register}
                             type='text'
@@ -85,20 +111,12 @@ const RegisterPage = () => {
                         <InputComponent
                             register={register}
                             type='text'
-                            label='Województwo'
-                            placeholder='Wprowadź województwo'
-                            name="province"
-                            error={errors.province}
-                        />
-                        <InputComponent
-                            register={register}
-                            type='text'
                             label='Kod Pocztowy'
                             placeholder='Wprowadź kod pocztowy'
                             name="postalCode"
                             error={errors.postalCode}
                         />
-                        <InputComponent
+                          <InputComponent
                             register={register}
                             type='text'
                             label='Numer domu'
@@ -106,6 +124,17 @@ const RegisterPage = () => {
                             name='homeNumber'
                             error={errors.homeNumber}
                         />
+                        </div>
+                        <InputComponent
+                            register={register}
+                            type='text'
+                            label='Województwo'
+                            placeholder='Wprowadź województwo'
+                            name="province"
+                            error={errors.province}
+                        />
+                        
+                      
                         <InputComponent
                             register={register}
                             type='text'

@@ -2,7 +2,8 @@ import User, { IUser } from "../model/User";
 import {Document} from 'mongoose';
 import jwt,{Secret,JwtPayload} from 'jsonwebtoken'
 import {Request,Response,NextFunction} from 'express'
-import { SECRET_KEY } from "..";
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET || "Secret";
 export const registerUser = async (user : Document<IUser>) => {
   try{
     await User.create(user);

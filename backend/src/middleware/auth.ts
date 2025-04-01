@@ -1,7 +1,8 @@
 import { Response,Request,NextFunction } from "express";
 import jwt,{Secret,JwtPayload} from 'jsonwebtoken'
 import { CustomRequest } from "../service/AuthService";
-import { SECRET_KEY } from "..";
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET || "Secret";
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
  try {
    const token = req.cookies.token;
