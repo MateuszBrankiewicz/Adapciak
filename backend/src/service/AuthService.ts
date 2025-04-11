@@ -50,3 +50,12 @@ export const loginUser = async (email:string,password:string) => {
     }
   
 }
+export const getUserId = async (token: string): Promise<string | null> => {
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    return decoded._id || null;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return null;
+  }
+};

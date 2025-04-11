@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import RegisterPage from './pages/RegisterPage'
 import TestPage from './pages/TestPage'
 import  AdsAdd  from './pages/AdsAdd'
+import ShowAds from './pages/ShowAds'
 function App() {
   
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path='/testPage' element={<TestPage/>}></Route>
           <Route path="/" element={<HomePage />} />
           <Route path="/ads/add" element={<AdsAdd/>}></Route>
+          <Route path="/ads" element={<ShowAds />} />
         </Routes>
       </BrowserRouter>
     </>

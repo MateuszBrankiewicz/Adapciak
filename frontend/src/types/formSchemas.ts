@@ -37,7 +37,7 @@ const adsAddSchema = z.object({
     title: z.string().min(1, "Nazwa jest wymagana"),
     description: z.string().min(1, "Opis jest wymagany"),
     location: z.string().min(1, "Lokalizacja jest wymagana"),
-    species: z.enum(["dog", "cat"], {
+    pet: z.enum(["dog", "cat"], {
         errorMap: () => ({ message: "Wybierz gatunek" }),
     }),
     age: z.enum(["puppy", "adult", "senior"], {
@@ -46,11 +46,11 @@ const adsAddSchema = z.object({
     size: z.enum(["small", "medium", "large"], {
         errorMap: () => ({ message: "Wybierz rozmiar" }),
     }),
-    images: z.array(z.string()).min(1, "Dodaj przynajmniej jedno zdjęcie"),
-    contact: z.object({
-        email: z.string().email("Podaj poprawny adres e-mail"),
-        phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
-    }),
+    
+    // contact: z.object({
+    //     email: z.string().email("Podaj poprawny adres e-mail"),
+    //     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
+    // }),
 });
 type AdsAddSchema = z.infer<typeof adsAddSchema>;
 type LoginFormSchema = z.infer<typeof loginFormSchema>;

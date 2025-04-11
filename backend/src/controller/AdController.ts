@@ -1,16 +1,33 @@
 import Ad from "../model/Ads";
+import {Request,Response} from 'express'
+import { getUserId } from "../service/AuthService";
 
-export async function createAd() {
+export async function createAd(req:Request, res:Response) {
+    const { title, description, images } = req.body;
+    const userId = await getUserId(req.cookies.token);
+
     const newAd = new Ad({
-      title: "Kot do adopcji",
-      description: "Piękny kotek szuka domu!",
-      userId: "67dda7f48d65f3d7a176d29b",  
-      images: [
-        { url: "https://example.com/image1.jpg", description: "Kot na kanapie" },
-        { url: "https://example.com/image2.jpg" }
-      ]
+        title,
+        description,
+        userId,
+        images,
     });
+    try {
+        await newAd.save();
+        res.status(201).json({ message: "Ogłoszenie dodane", adId: newAd._id });
+    } catch (error) {
+      console.log("error", error);
+        res.status(400).json({ error: "Nie udało się dodać ogłoszenia" });
+    }
   
-    await newAd.save();
-    console.log("Ogłoszenie dodane:", newAd);
+  
   }
+export async function getAds(req:Request, res:Response) {
+    try {
+        const ads = await Ad.find();
+        console.log("ads", ads);
+        res.status(200).json(ads);
+    } catch (error) {
+        res.status(500).json({ error: "Nie udało się pobrać ogłoszeń" });
+    }
+}
