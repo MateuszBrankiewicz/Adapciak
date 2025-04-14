@@ -6,30 +6,13 @@ import Form from '../components/Form';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
 import axios from 'axios';
+import { useLoginUser } from '../hooks/authHooks';
 const LoginPage = () => {
+  const { loginUser } = useLoginUser();
   const onSubmit = async (data: LoginFormSchema, setError: UseFormSetError<LoginFormSchema>) => {
-    const{email, password} = data;
-    
-    try {
-      console.log(data);
-      const response = await axios.post('http://localhost:3000/user/login', {
-        email,
-        password
-      });
-      if (response.status === 200) {
-        console.log(response);
-        const token = (response.data as { token: string }).token;
-        document.cookie = `token=${token}`
-        window.location.href = '/home';
-        alert("Zalogowano");
-      }
-    
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      setError('email', {
-        message: 'Podano nieprawidłowy adres email lub hasło.'
-      });
-    }
+   
+      loginUser(data, setError);
+   
   };
 
   return (

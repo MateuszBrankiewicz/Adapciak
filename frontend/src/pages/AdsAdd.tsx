@@ -3,37 +3,47 @@ import InputComponent from "../components/InputComponent";
 import NavigationBar from "../components/NavigationBar";
 import { AdsAddSchema, adsAddSchema } from "../types/formSchemas";
 import Button from "../components/Button";
-import { useState } from "react";
+import { use, useState } from "react";
 import axios from "axios";
+import SelectWithSearch from "../components/SelectWithSearch";
+import { useQuery } from "@tanstack/react-query";
 const AdsAdd = () => {
     const [base64Images, setBase64Images] = useState<string[]>([]);
+    const [isChecked, setIsChecked] = useState(false);
+    const getVoivodeships = useQuery({
+        queryKey: ["voivodeships"],
+        queryFn: async () => {
+            const response = await axios.get("http://localhost:3000/formFillers/voivodeships");
+            return response.data as string[];
+        },
+    });
     const onSubmit = async (data: AdsAddSchema) => {
 
         const completeData = {
             ...data,
-            images : base64Images.map((image) => ({
+            images: base64Images.map((image) => ({
                 url: image,
-            })), 
-                
+            })),
+
         }
-        if(completeData.images.length === 0) {
+        if (completeData.images.length === 0) {
             alert("Dodaj zdjęcie");
             return;
         }
-    try {
-        const response = await axios.post("http://localhost:3000/ads/create", completeData, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        console.log(response.data);
-        alert("Ogłoszenie dodane");
-    } catch (error: any) {
-        console.error("Error adding ad:", error);
-        alert("Nie udało się dodać ogłoszenia");
-    }
-       
+        try {
+            const response = await axios.post("http://localhost:3000/ads/create", completeData, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            console.log(response.data);
+            alert("Ogłoszenie dodane");
+        } catch (error: any) {
+            console.error("Error adding ad:", error);
+            alert("Nie udało się dodać ogłoszenia");
+        }
+
     }
     const readImageToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -56,7 +66,7 @@ const AdsAdd = () => {
     return (
         <div className="w-full h-full bg-white text-gray-800">
             <NavigationBar />
-            <div className="max-w-4xl mx-auto p-6">
+            <div className=" w-full flex items-center justify-center mx-auto p-6">
                 <Form
                     schema={adsAddSchema}
                     onSubmit={onSubmit}
@@ -65,17 +75,29 @@ const AdsAdd = () => {
                 >
                     {({ register, errors }) => (
                         <>
-
-                            <InputComponent
-                                register={register}
-                                type="text"
-                                name="title"
-                                label="Nazwa ogłoszenia"
-                                placeholder="Nazwa ogłoszenia"
-                                error={errors.title}
-                            />
                             <div className="text-left mb-4">
-                                <label className="text-gray-900 text-xl text-left mb-2" htmlFor="images">Zdjęcia</label>
+                                <InputComponent
+                                    register={register}
+                                    type="text"
+                                    name="title"
+                                    label="Nazwa ogłoszenia"
+                                    placeholder="Nazwa ogłoszenia"
+                                    error={errors.title}
+                                />
+
+
+                                <label className="text-gray-900 text-xl text-left mb-2" htmlFor="description">Opis ogłoszenia</label>
+
+                                <textarea
+                                    {...register("description")}
+                                    name="description"
+                                    id="description"
+                                    rows={4}
+                                    className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    placeholder="Opis ogłoszenia">
+
+                                </textarea>
+                                < label className="text-gray-900 text-xl text-left mb-2" htmlFor="images">Zdjęcia</label>
                                 <input
 
                                     type="file"
@@ -98,26 +120,38 @@ const AdsAdd = () => {
 
                                     className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                                 />
-                                <label className="text-gray-900 text-xl text-left mb-2" htmlFor="description">Opis ogłoszenia</label>
-
-                                <textarea
-                                    {...register("description")}
-                                    name="description"
-                                    id="description"
-                                    rows={4}
-                                    className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                    placeholder="Opis ogłoszenia">
-
-                                </textarea>
                             </div>
-                            <InputComponent
-                                type="text"
-                                name="location"
-                                label="Lokalizacja"
-                                placeholder="Lokalizacja"
-                                register={register}
-                                error={errors.location}
-                            />
+
+                            <div className="flex items-center mb-4 text-xl">
+                                <input
+                                    type="checkbox"
+                                    id="useAccountLocation"
+                                    className="mr-2"
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setIsChecked(true);
+                                        } else {
+                                            setIsChecked(false);
+                                        }
+                                    }
+                                    }
+                                />
+                                <label htmlFor="useAccountLocation">Użyj innej lokalizacji niż ta przypisana do konta</label>
+                            </div>
+                            {isChecked && (
+                                <SelectWithSearch
+                                    data={getVoivodeships?.data || []}
+                                    onChange={(value) => {
+                                        console.log(value);
+                                    }}
+                                    value=""
+                                    name="voivodeship"
+                                    label="Województwo"
+                                    placeholder="Województwo"
+                                    register={register}
+                                    error={errors.voivodeship}
+                                />
+                            )}
                             <div className="flex space-x-2">
                                 <div className="mb-4">
                                     <label

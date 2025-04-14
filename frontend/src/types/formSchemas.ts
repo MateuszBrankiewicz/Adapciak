@@ -26,7 +26,7 @@ const registerFormSchema = z.object({
         .max(32, "Hasło może mieć maksymalnie 32 znaki."),
     street: z.string().min(1,"Ulica jest wymagana"),
     postalCode: z.string().regex(/^\d{2}-\d{3}$/, "Niepoprawny kod pocztowy"),
-    province: z.string().min(1, "Wojewodztwo jest wymagane"),
+    voivodeship: z.string().min(1, "Wojewodztwo jest wymagane"),
     city: z.string().min(1,"Miasto jest wymagane"),
     homeNumber: z.string().min(1,"Numer jest wymagany"),
     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
@@ -36,7 +36,7 @@ const registerFormSchema = z.object({
 const adsAddSchema = z.object({
     title: z.string().min(1, "Nazwa jest wymagana"),
     description: z.string().min(1, "Opis jest wymagany"),
-    location: z.string().min(1, "Lokalizacja jest wymagana"),
+    
     pet: z.enum(["dog", "cat"], {
         errorMap: () => ({ message: "Wybierz gatunek" }),
     }),
@@ -46,7 +46,9 @@ const adsAddSchema = z.object({
     size: z.enum(["small", "medium", "large"], {
         errorMap: () => ({ message: "Wybierz rozmiar" }),
     }),
-    
+    district: z.string().min(1, "Powiat jest wymagany"),
+    voivodeship: z.string().min(1, "Województwo jest wymagane"),
+    city: z.string().min(1, "Miasto jest wymagane"),
     // contact: z.object({
     //     email: z.string().email("Podaj poprawny adres e-mail"),
     //     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),

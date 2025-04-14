@@ -7,10 +7,13 @@ import RegisterPage from './pages/RegisterPage'
 import TestPage from './pages/TestPage'
 import  AdsAdd  from './pages/AdsAdd'
 import ShowAds from './pages/ShowAds'
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import PrivateRoute from './components/PrivateRoute'
 function App() {
   
   return (
     <>
+    <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter >
         <Routes>
           <Route path="/home" element={<HomePage />} />
@@ -18,10 +21,20 @@ function App() {
           <Route path='/register' element={<RegisterPage />} />
           <Route path='/testPage' element={<TestPage/>}></Route>
           <Route path="/" element={<HomePage />} />
-          <Route path="/ads/add" element={<AdsAdd/>}></Route>
+        
           <Route path="/ads" element={<ShowAds />} />
+         
+          <Route path="/ads/add" element={
+            <PrivateRoute>
+              <AdsAdd />
+            </PrivateRoute>
+          }></Route>
+
+
+
         </Routes>
       </BrowserRouter>
+    </QueryClientProvider>
     </>
   )
 }

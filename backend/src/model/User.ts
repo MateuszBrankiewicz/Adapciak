@@ -6,8 +6,11 @@ const bcrypt = require('bcryptjs');
 export interface IUser extends Document {
     email: string,
     password: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
     street: string,
-    province: string,
+    voivodeship: string,
     postalCode: string,
     homeNumber: string,
     city: string,
@@ -25,11 +28,24 @@ const UserSchema: Schema = new Schema({
         type: String,
         required: true
     },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+      
     street: {
         type: String,
         required: true
     },
-    province: {
+    voivodeship: {
         type: String,
         required: true
     },

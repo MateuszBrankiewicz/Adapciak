@@ -3,39 +3,16 @@ import { registerFormSchema, RegisterFormSchema } from "../types/formSchemas";
 import Form from "../components/Form";
 import InputComponent from "../components/InputComponent";
 import Button from "../components/Button";
-import axios from "axios";
+import { useRegisterUser } from "../hooks/authHooks";
+import SelectWithSearch from "../components/SelectWithSearch";
+import { useVoivodeships } from "../hooks/formFillersHooks";
 
 const RegisterPage = () => {
+    const { registerUser } = useRegisterUser();
+    const { data } = useVoivodeships();
     const onSubmit = async (data: RegisterFormSchema, setError: UseFormSetError<RegisterFormSchema>) => {
-        const { email, password, confirmPassword, street, province, postalCode, homeNumber, city, firstName, lastName } = data;
-        if (password !== confirmPassword) {
-            setError('confirmPassword', {
-                message: 'Hasła nie są takie same.'
-            });
-            return
-        }
-        try {
-            await axios.post('http://localhost:3000/user/register', {
-                email,
-                firstName,
-                lastName,
-                password,
-                street,
-                province,
-                postalCode,
-                homeNumber,
-                city
-            });
-               
-                alert("Udało się zalogować")
-                window.location.href="/login"
-            
-        } catch (error) {
-            console.log("Tu error" + error);
-            setError('email', {
-                message: 'Istnieje już konto z takim kontem email.'
-            });
-        }
+        console.log(data);
+        registerUser(data, setError)
     };
 
     return (
@@ -70,71 +47,76 @@ const RegisterPage = () => {
                             error={errors.confirmPassword}
                             name="confirmPassword"
                         />
-                        <div className="flex space-x-2">  
-                         <InputComponent
-                        register={register}
-                        type="text"
-                        label="Podaj imie"
-                        placeholder="Podaj imie"
-                        error={errors.firstName}
-                        name="firstName"
-                        >
-                        </InputComponent>
-                        <InputComponent
-                        register={register}
-                        type="text"
-                        label="Podaj nazwisko"
-                        placeholder="Podaj nazwisko"
-                        error={errors.lastName}
-                        name="lastName"
-                        ></InputComponent>
+                        <div className="flex space-x-2">
+                            <InputComponent
+                                register={register}
+                                type="text"
+                                label="Podaj imie"
+                                placeholder="Podaj imie"
+                                error={errors.firstName}
+                                name="firstName"
+                            >
+                            </InputComponent>
+                            <InputComponent
+                                register={register}
+                                type="text"
+                                label="Podaj nazwisko"
+                                placeholder="Podaj nazwisko"
+                                error={errors.lastName}
+                                name="lastName"
+                            ></InputComponent>
 
                         </div>
 
                         <InputComponent
-                        register={register}
-                        type='text'
-                        label='Numer telefonu'
-                        placeholder="Wprowadź numer telefonu"
-                        name="phone"
-                        error={errors.phone}>
+                            register={register}
+                            type='text'
+                            label='Numer telefonu'
+                            placeholder="Wprowadź numer telefonu"
+                            name="phone"
+                            error={errors.phone}>
                         </InputComponent>
                         <div className="flex space-x-2 ">
-                        <InputComponent
-                            register={register}
-                            type='text'
-                            label='Ulica'
-                            placeholder='Wprowadź ulicę'
-                            name="street"
-                            error={errors.street}
-                        />
-                        <InputComponent
-                            register={register}
-                            type='text'
-                            label='Kod Pocztowy'
-                            placeholder='Wprowadź kod pocztowy'
-                            name="postalCode"
-                            error={errors.postalCode}
-                        />
-                          <InputComponent
-                            register={register}
-                            type='text'
-                            label='Numer domu'
-                            placeholder='Wprowadź numer domu'
-                            name='homeNumber'
-                            error={errors.homeNumber}
-                        />
+                            <InputComponent
+                                register={register}
+                                type='text'
+                                label='Ulica'
+                                placeholder='Wprowadź ulicę'
+                                name="street"
+                                error={errors.street}
+                            />
+                            <InputComponent
+                                register={register}
+                                type='text'
+                                label='Kod Pocztowy'
+                                placeholder='Wprowadź kod pocztowy'
+                                name="postalCode"
+                                error={errors.postalCode}
+                            />
+                            <InputComponent
+                                register={register}
+                                type='text'
+                                label='Numer domu'
+                                placeholder='Wprowadź numer domu'
+                                name='homeNumber'
+                                error={errors.homeNumber}
+                            />
                         </div>
-                        <InputComponent
+                        <SelectWithSearch
                             register={register}
-                            type='text'
-                            label='Województwo'
-                            placeholder='Wprowadź województwo'
-                            name="province"
-                            error={errors.province}
-                        />
-                        
-                      
+                            label="Wybierz województwo"
+                            name="voivodeship"
+                            placeholder="Wybierz województwo"
+                            error={errors.voivodeship}
+                            data={data || []}
+                            value=""
+                            onChange={(value) => {
+                                console.log(value);
+                            }
+                            }>
+                        </SelectWithSearch>
+
+
                         <InputComponent
                             register={register}
                             type='text'

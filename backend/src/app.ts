@@ -5,6 +5,7 @@ import cors from "cors";
 import {Router} from 'express';
 import authRoutes from './routes/authRoutes';
 import adRoutes from './routes/adRoutes';
+import formFillersRoutes from './routes/formFillersRoutes';
 
 const app = express();
 
@@ -29,5 +30,5 @@ app.get('/test', auth, (_req: Request, res: Response) => {
 
 app.use('/user', authRoutes);
 app.use('/ads', adRoutes);
-
+app.use('/formFillers', formFillersRoutes);
 export default app;
