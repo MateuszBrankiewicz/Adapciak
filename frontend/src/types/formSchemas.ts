@@ -46,9 +46,10 @@ const adsAddSchema = z.object({
     size: z.enum(["small", "medium", "large"], {
         errorMap: () => ({ message: "Wybierz rozmiar" }),
     }),
-    district: z.string().min(1, "Powiat jest wymagany"),
     voivodeship: z.string().min(1, "Województwo jest wymagane"),
     city: z.string().min(1, "Miasto jest wymagane"),
+    number: z.string().min(9,"Podaj poprawny numer").max(9, "Podaj poprawny numer"),
+    note: z.string().min(1, "Notka jest wymagana"),
     // contact: z.object({
     //     email: z.string().email("Podaj poprawny adres e-mail"),
     //     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),

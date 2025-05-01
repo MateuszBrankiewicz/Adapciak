@@ -41,22 +41,12 @@ const UserSchema: Schema = new Schema({
         required: true
     },
       
-    street: {
-        type: String,
-        required: true
-    },
+    
     voivodeship: {
         type: String,
         required: true
     },
-    postalCode: {
-        type: String,
-        required: true
-    },
-    homeNumber: {
-        type: String,
-        required: true
-    },
+    
     city: {
         type: String,
         required: true

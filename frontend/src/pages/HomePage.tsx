@@ -1,49 +1,39 @@
-import '../App.css';
-import NavigationBar from '../components/NavigationBar';
-import { Slider } from '../components/Slider';
-import image1 from "../assets/image1.webp";
-import image2 from "../assets/image2.jpg";
-import image3 from "../assets/image3.jpg";
-import { Link } from 'react-router-dom';
-import { SearchBar } from '../components/SearchBar';
+import NavigationBarNoAuth from "../components/NavigationBarNoAuth";
+import { Link } from "react-router-dom";
 
-function HomePage() {
-    const data = [image1, image2, image3];
-    const ads = [
-        { id: 1, name: "Burek", description: "Przyjazny pies szuka domu", image: image1 },
-        { id: 2, name: "Mruczek", description: "Kot, który uwielbia się przytulać", image: image2 },
-        { id: 3, name: "Reksio", description: "Energiczny pies dla aktywnej rodziny", image: image3 },
-    ];
-
+const HomePage = () => {
     return (
-        <div className='w-full h-full'>
-            <NavigationBar />
-            <div className='w-full h-full flex flex-col justify-between items-center'>
-                <Slider data={data}></Slider>
-                <SearchBar></SearchBar>
-                <div className='w-full max-w-4xl mt-8'>
-                    <h2 className='text-2xl font-bold mb-4'>Ogłoszenia adopcyjne</h2>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                        {ads.map(ad => (
-                            <div key={ad.id} className='border rounded-lg p-4 shadow-md'>
-                                <img src={ad.image} alt={ad.name} className='w-full h-40 object-cover rounded-md mb-4' />
-                                <h3 className='text-xl font-semibold'>{ad.name}</h3>
-                                <p className='text-gray-600'>{ad.description}</p>
-                                <button className='mt-4 px-4 py-2 bg-green-500 border-main-button-border text-white rounded hover:bg-blue-600'>
-                                    Zobacz więcej
+        <div className="w-full flex flex-col min-h-screen">
+           <NavigationBarNoAuth />
+
+            <div className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
+                <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start lg:justify-between w-full max-w-7xl">
+                    <div className="max-w-xl mt-8 lg:mt-0 text-center lg:text-left">
+                        <h1 className="text-5xl lg:text-6xl font-extrabold">Adoptuj zwierzątko,</h1>
+                        <h2 className="text-4xl lg:text-5xl text-main-color font-extrabold mt-2">Odmień życie</h2>
+                        <p className="text-text-gray text-xl lg:text-2xl mt-6">Znajdź swoją bratnią duszę wśród zwierzątek już dziś!</p>
+                        <p className="text-text-gray text-xl lg:text-2xl mt-2">Wystarczy, że zaczniesz przeglądać ogłoszenia</p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-8">
+                            <Link to="/ads" className="w-full sm:w-auto">
+                                <button className="bg-main-color rounded-md text-white font-bold px-6 py-3 cursor-pointer hover:brightness-90 transition text-xl w-full sm:w-auto flex items-center justify-center">
+                                    Przeglądaj ogłoszenia
+                                    <span className="material-icons ml-2">arrow_forward</span>
                                 </button>
-                            </div>
-                        ))}
+                            </Link>
+                            <Link to="/login" className="w-full sm:w-auto">
+                                <button className="border-main-color border-2 rounded-md text-main-color font-bold px-6 py-3 cursor-pointer hover:bg-main-color hover:bg-opacity-10 transition text-xl w-full sm:w-auto">
+                                    Zaloguj się
+                                </button>
+                            </Link>
+                        </div>
                     </div>
-                    <div className='mt-8 flex justify-center'>
-                        <Link to="/ads/add" className='px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600'>
-                            Dodaj ogłoszenie
-                        </Link>
+                    <div className="w-full max-w-md lg:max-w-lg">
+                        <img src="/samoyed.png" alt="Pies do adopcji" className="w-full h-auto" />
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default HomePage;

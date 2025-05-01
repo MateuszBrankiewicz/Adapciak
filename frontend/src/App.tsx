@@ -9,6 +9,7 @@ import  AdsAdd  from './pages/AdsAdd'
 import ShowAds from './pages/ShowAds'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import PrivateRoute from './components/PrivateRoute'
+import SingleAd from './pages/SingleAd'
 function App() {
   
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
         
           <Route path="/ads" element={<ShowAds />} />
-         
+          <Route path="ads/:id" element={<SingleAd />} />
           <Route path="/ads/add" element={
             <PrivateRoute>
               <AdsAdd />
