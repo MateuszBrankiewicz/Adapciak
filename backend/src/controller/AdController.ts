@@ -39,7 +39,8 @@ export async function getAds(req:Request, res:Response) {
 export async function singleAd(req: Request, res: Response) {
     try {
       const singleAd = await Ad.findOne({ _id: req.params.id });
-  
+      singleAd!.views += 1;
+      await singleAd!.save();
       
   
       res.status(200).json(singleAd);

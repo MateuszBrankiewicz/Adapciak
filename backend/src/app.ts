@@ -6,7 +6,7 @@ import {Router} from 'express';
 import authRoutes from './routes/authRoutes';
 import adRoutes from './routes/adRoutes';
 import formFillersRoutes from './routes/formFillersRoutes';
-
+import messageRoutes from './routes/messageRoutes';
 const app = express();
 
 app.use(cookieParser());
@@ -31,4 +31,5 @@ app.get('/test', auth, (_req: Request, res: Response) => {
 app.use('/user', authRoutes);
 app.use('/ads', adRoutes);
 app.use('/formFillers', formFillersRoutes);
+app.use('/message', auth, messageRoutes);
 export default app;

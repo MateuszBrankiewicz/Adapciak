@@ -53,6 +53,13 @@ export const loginUser = async (email:string,password:string) => {
 export const getUserId = async (token: string): Promise<string | null> => {
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    if (typeof decoded !== "object" || !decoded._id) {
+      throw new Error("Invalid token");
+    }
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decoded.exp && decoded.exp < currentTime) {
+      throw new Error("Token expired");
+    }
     return decoded._id || null;
   } catch (error) {
     console.error("Invalid token:", error);

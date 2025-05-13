@@ -1,5 +1,5 @@
 import { FieldError, FieldValues, Path, UseFormRegister } from "react-hook-form"; 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 type SelectOption = {
   value: string;
@@ -36,18 +36,19 @@ const SelectWithSearch = <T extends FieldValues>({
     const [filteredData, setFilteredData] = useState<SelectOption[]>([]);
     const ref = useRef<HTMLDivElement>(null);
     
-    // Przetwarzanie danych, aby obsługiwać zarówno tablice stringów jak i obiektów
-    const normalizedData = data.map((item): SelectOption => {
-        if (typeof item === 'string') {
-            return { value: item, label: item };
-        }
-        return item as SelectOption;
-    });
+    // Memoize normalizedData to prevent recreation on every render
+    const normalizedData = useMemo(() => {
+        return data.map((item): SelectOption => {
+            if (typeof item === 'string') {
+                return { value: item, label: item };
+            }
+            return item as SelectOption;
+        });
+    }, [data]);
     
-    // Synchronizacja z zewnętrzną wartością
+    // Synchronizacja z zewnętrzną wartością - uruchamiana tylko gdy zmieni się value
     useEffect(() => {
         if (value !== undefined) {
-            // Znajdź odpowiednią etykietę jeśli podano wartość
             const option = normalizedData.find(item => item.value === value);
             setSearch(option ? option.label : value);
         }
@@ -68,12 +69,12 @@ const SelectWithSearch = <T extends FieldValues>({
             if (ref.current && !ref.current.contains(event.target as Node)) {
                 setIsOpen(false);
                 
-                // Jeśli użytkownik nie wybrał żadnej opcji, przywracamy poprzednią wartość
+                // Dodajemy warunek, żeby uniknąć nadmiarowych aktualizacji stanu
                 if (!filteredData.some(item => item.label === search)) {
                     const option = normalizedData.find(item => item.value === value);
-                    if (option) {
+                    if (option && search !== option.label) {
                         setSearch(option.label);
-                    } else if (search && filteredData.length === 0) {
+                    } else if (search && filteredData.length === 0 && search !== '') {
                         setSearch('');
                     }
                 }
