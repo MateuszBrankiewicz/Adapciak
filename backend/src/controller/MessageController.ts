@@ -9,6 +9,7 @@ export const getAllMessages = async (req:Request, res:Response) => {
      res.status(result.status).json(result.data);
 }
 export const getMessage = async (req:Request, res:Response) => {
+    const id = req.params.id;
     const result = await MessageService.getMessage(req.params.id);
      res.status(result.status).json(result.data);
 }
@@ -19,7 +20,8 @@ export const createMessage = async (req:Request, res: Response) => {
     
     
     if (!receiver || !adId || !content) {
-        return res.status(400).json({ error: "Brakuje wymaganych pól" });
+        res.status(400).json({ error: "Brakuje wymaganych pól" });
+        return;
     }
     
     const result = await MessageService.createMessage({

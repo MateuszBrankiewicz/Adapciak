@@ -5,7 +5,6 @@ import { UseFormSetError } from "react-hook-form";
 
 const fetchMe = async () => {
   const response = await axios.get("http://localhost:3000/user/check", { withCredentials: true });
-
   return response;
 }
 export const checkToken = () => {
@@ -66,7 +65,7 @@ export const useLoginUser = () => {
     onSuccess: (data) => {
       alert("Udało się zalogować");
       const token = (data as { token: string }).token;
-      window.location.href = "/";
+      window.location.href = "/ads";
     }
   });
 
@@ -74,6 +73,10 @@ export const useLoginUser = () => {
     // const { email, password } = data;
     mutation.mutate(data, {
       onError: (error) => {
+        console.log("Tu error: ", error);
+        setError('email', {
+          message: 'Niepoprawny email lub hasło.'
+        });
       }
     });
   };

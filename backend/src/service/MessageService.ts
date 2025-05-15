@@ -1,25 +1,53 @@
 import Message, { IMessage } from "../model/Message";
+import mongoose from "mongoose";
+
 async function fetchAllMessages(userId: string) {
     try {
-        const messages = await Message.find({
-            $or: [
-                { sender: userId },
-                { receiver: userId }
-            ]
-        }).populate("sender", "name").populate("receiver", "name").populate("adId", "title");
-        
+        const message = await Message.find();
+        const messages = await Message.aggregate([
+            {
+            $match: {
+                $or: [
+                { sender: new mongoose.Types.ObjectId(userId) },
+                { receiver: new mongoose.Types.ObjectId(userId) }
+                ]
+            }
+            },
+            {
+            $sort: { createdAt: -1 }
+            },
+            {
+            $group: {
+                _id: "$adId",
+                messageId: { $first: "$_id" },
+                sender: { $first: "$sender" },
+                receiver: { $first: "$receiver" },
+                adId: { $first: "$adId" },
+                content: { $first: "$content" },
+                createdAt: { $first: "$createdAt" },
+                updatedAt: { $first: "$updatedAt" },
+                read: { $first: "$read" }
+            }
+            }
+        ]);
+        await Message.populate(messages, [
+            {path:"sender", select: "firstName"},
+            {path:"receiver", select: "firstName"},
+            {path:"adId", select: "title"}
+        ]);
         if (!messages || messages.length === 0) {
             return { status: 404, data: { error: "Nie znaleziono wiadomości" } };
         }
         
         return { status: 200, data: messages };
     } catch (error) {
+        console.log("Error fetching messages:", error);
         return { status: 500, data: { error: "Nie udało się pobrać wiadomości" } };
     }
 }
 async function getMessage(conversationId: string) {
     try {
-        const message = await Message.findById(conversationId)
+        const message = await Message.find({"adId": conversationId})
             .populate("sender", "name")
             .populate("receiver", "name")
             .populate("adId", "title");
@@ -50,7 +78,7 @@ async function createMessage(message:IMessage, userId: string) {
             .populate("receiver", "name")
             .populate("adId", "title");
             
-        return { status: 201, data: populatedMessage };
+        return { status: 201, message:"Wiadomosc wyslana" };
     } catch (error) {
         console.log("error", error);
         return { status: 500, data: { error: "Nie udało się dodać wiadomości" } };
@@ -62,5 +90,5 @@ export const MessageService = {
     fetchAllMessages,
     getMessage,
     createMessage,
-     deleteMessage
+    deleteMessage
 }

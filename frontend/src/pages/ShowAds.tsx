@@ -59,7 +59,6 @@ export default function MobileSearchForm() {
             .get("http://localhost:3000/ads")
             .then((response) => {
                 setData(response.data as []);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -67,11 +66,7 @@ export default function MobileSearchForm() {
     }, []);
 
     const handleFilters = () => {
-        console.log(searchQuery);
-        console.log(category);
-        console.log(voivodeship);
-        console.log(district);
-        console.log(city);
+        // Implementacja filtrowania
     }
 
     return (

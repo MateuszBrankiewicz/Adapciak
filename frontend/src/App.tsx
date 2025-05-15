@@ -10,6 +10,7 @@ import ShowAds from './pages/ShowAds'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import PrivateRoute from './components/PrivateRoute'
 import SingleAd from './pages/SingleAd'
+import MessagePage from './pages/MessagePage'
 function App() {
   
   return (
@@ -30,7 +31,7 @@ function App() {
               <AdsAdd />
             </PrivateRoute>
           }></Route>
-
+        <Route path='/messages' element={<PrivateRoute><MessagePage/></PrivateRoute>}></Route>
 
 
         </Routes>

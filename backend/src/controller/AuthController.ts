@@ -5,7 +5,7 @@ import { registerUser, loginUser, getUserId } from '../service/AuthService'
 
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET || "Secret";
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { validationResult } from 'express-validator';
 
 
@@ -66,7 +66,6 @@ export const getName = async (req: Request, res: Response) => {
       res.status(404).json('Uzytkownik nie znaleziony');
       return;
     }
-    console.log(user);
     res.status(200).json({
       name: user.firstName,
     });
@@ -76,14 +75,13 @@ export const getName = async (req: Request, res: Response) => {
 };
 export const checkLogged = async (req: Request, res: Response) => {
   const token = req.cookies.token;
-  //console.log(token);
   if (!token) {
     res.status(401).json('False')
     return;
   }
   try {
-    const decoded = jwt.verify(token, SECRET_KEY) as { name: string };
-    res.status(200).json("True");
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload ;
+    res.status(200).json(decoded._id);
   } catch (err) {
     res.status(400).json("False");
   }

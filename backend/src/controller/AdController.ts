@@ -30,7 +30,6 @@ export async function createAd(req:Request, res:Response) {
 export async function getAds(req:Request, res:Response) {
     try {
         const ads = await Ad.find();
-        console.log("ads", ads);
         res.status(200).json(ads);
     } catch (error) {
         res.status(500).json({ error: "Nie udało się pobrać ogłoszeń" });

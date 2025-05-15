@@ -8,7 +8,6 @@ const TestPage: React.FC = () => {
     useEffect(() => {
         axios.get('http://localhost:3000/test',{withCredentials: true})
             .then(response => {
-                console.log(response);
                 
             })
             .catch(error => {

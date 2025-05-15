@@ -12,7 +12,6 @@ const RegisterPage = () => {
     const { registerUser } = useRegisterUser();
     const { data } = useVoivodeships();
     const onSubmit = async (data: RegisterFormSchema, setError: UseFormSetError<RegisterFormSchema>) => {
-        console.log(data);
         registerUser(data, setError);
     };
 

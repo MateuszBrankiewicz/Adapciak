@@ -1,22 +1,22 @@
 import { useParams, Link } from "react-router-dom";
 import { useAd } from "../hooks/adHooks";
 import { Slider } from "../components/Slider";
-import NavigationBar from "../components/NavigationBar";
-import NavigationBarNoAuth from "../components/NavigationBarNoAuth";
+import axios from "axios";
 import { checkToken } from "../hooks/authHooks";
 import { useState } from "react";
 import Button from "../components/Button";
+import NavigationBar from "../components/NavigationBar";
 
 const SingleAd = () => {
     const {id} = useParams();
     const { data, isLoading, isError } = useAd(id ?? "");
     const { data: authData, isError: authError } = checkToken();
     const [message, setMessage] = useState("");
+    const isNonThisUser = authData?.data !== data?.userId;
     const isLoggedIn = !authError;
-
     if (isLoading) return (
         <div className="w-full h-screen flex flex-col">
-            <div>{authError ? <NavigationBarNoAuth /> : <NavigationBar />}</div>
+           <NavigationBar/>
             <div className="flex-1 flex items-center justify-center">
                 <div className="animate-pulse flex space-x-4">
                     <div className="rounded-full bg-gray-200 h-12 w-12"></div>
@@ -34,7 +34,7 @@ const SingleAd = () => {
     
     if (isError) return (
         <div className="w-full h-screen flex flex-col">
-            <div>{authError ? <NavigationBarNoAuth /> : <NavigationBar />}</div>
+           <NavigationBar/>
             <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                     <span className="material-icons text-red-500 text-6xl mb-4">error_outline</span>
@@ -57,14 +57,28 @@ const SingleAd = () => {
         });
     };
 
-    const handleContactSubmit = (e: React.FormEvent) => {
+    const  handleContactSubmit =  async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would implement the logic to send the message
-        alert(`Wiadomość wysłana: ${message}`);
-        setMessage("");
+        const adId = id;
+        const messageData = {
+            sender: authData?.data,
+            receiver: data?.userId,
+            content: message,
+            adId: adId
+        };
+        try{
+            const response = await axios.post("http://localhost:3000/message", messageData, { withCredentials: true })
+            if (response.status === 201) {
+                alert("Wiadomość została wysłana pomyślnie.");
+                setMessage("");
+            } else {
+                alert("Nie udało się wysłać wiadomości.");
+            }   
+    }catch (error) {
+            console.error("Error sending message:", error);
+        }
     };
 
-    // Helper function to translate pet attributes to Polish with proper styling
     const translatePetAttribute = (category: string, value: string | undefined) => {
         if (!value) return "--";
         
@@ -90,11 +104,9 @@ const SingleAd = () => {
 
     return (
         <div className="w-full min-h-screen bg-gray-50">
-            {/* Navigation */}
-            <div>{authError ? <NavigationBarNoAuth /> : <NavigationBar />}</div>
+           <NavigationBar/>
             
             <div className="container mx-auto px-4 py-8 max-w-6xl">
-                {/* Back button with subtle hover effect */}
                 <button 
                     onClick={() => window.history.back()}
                     className="flex items-center text-gray-600 mb-6 hover:text-main-color transition group"
@@ -103,11 +115,8 @@ const SingleAd = () => {
                     <span className="font-medium">Powrót do ogłoszeń</span>
                 </button>
 
-                {/* Main content with improved spacing and shadows */}
                 <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Left column - Images and main info */}
                     <div className="lg:w-2/3">
-                        {/* Title and date with subtle border accent */}
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8 border-t-4 border-main-color">
                             <h1 className="text-3xl font-bold text-gray-800 mb-3">{data?.title}</h1>
                             <div className="flex items-center justify-between text-sm">
@@ -122,12 +131,10 @@ const SingleAd = () => {
                             </div>
                         </div>
 
-                        {/* Image slider with improved container */}
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8 flex justify-center items-center">
                             <Slider data={data?.images.map((img) => img.url) || []} />
                         </div>
 
-                        {/* Description with subtle icon */}
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8">
                             <div className="flex items-center mb-5">
                                 <span className="material-icons text-main-color mr-3">description</span>
@@ -136,7 +143,6 @@ const SingleAd = () => {
                             <p className="text-gray-700 whitespace-pre-line leading-relaxed pl-2 border-l-2 border-gray-100">{data?.description}</p>
                         </div>
 
-                        {/* Additional notes with styled container */}
                         <div className="bg-white p-8 rounded-lg shadow-sm">
                             <div className="flex items-center mb-5">
                                 <span className="material-icons text-main-color mr-3">sticky_note_2</span>
@@ -148,9 +154,7 @@ const SingleAd = () => {
                         </div>
                     </div>
 
-                    {/* Right column - Details and contact with sticky positioning */}
                     <div className="lg:w-1/3 lg:self-start lg:sticky lg:top-6">
-                        {/* Pet details with icon indicators */}
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8">
                             <div className="flex items-center mb-5">
                                 <span className="material-icons text-main-color mr-3">pets</span>
@@ -189,7 +193,6 @@ const SingleAd = () => {
                             </div>
                         </div>
 
-                        {/* Location with map-style design */}
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8">
                             <div className="flex items-center mb-5">
                                 <span className="material-icons text-main-color mr-3">place</span>
@@ -204,7 +207,6 @@ const SingleAd = () => {
                             </div>
                         </div>
 
-                        {/* Contact form with improved styling */}
                         <div className="bg-white p-8 rounded-lg shadow-sm">
                             <div className="flex items-center mb-5">
                                 <span className="material-icons text-main-color mr-3">contact_phone</span>
@@ -212,7 +214,6 @@ const SingleAd = () => {
                             </div>
                             
                             {isLoggedIn ? (
-                                /* Show phone number if logged in - with nice phone badge */
                                 <div className="flex items-center mb-6 bg-green-50 p-3 rounded-md">
                                     <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
                                         <span className="material-icons text-green-600">phone</span>
@@ -242,13 +243,17 @@ const SingleAd = () => {
                             )}
 
                             <div className="pt-6 border-t border-gray-100">
-                                {isLoggedIn ? (
+                                
+                  
+                                
+                                {isLoggedIn  ? (
                                     /* Show message form if logged in - with improved styling */
                                     <>
                                         <div className="flex items-center mb-4">
                                             <span className="material-icons text-main-color mr-3">message</span>
                                             <h3 className="font-medium text-lg text-gray-800">Wyślij wiadomość</h3>
                                         </div>
+                                        {isNonThisUser && (
                                         <form onSubmit={handleContactSubmit} className="space-y-4">
                                             <textarea
                                                 className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-main-color focus:border-main-color bg-gray-50"
@@ -265,6 +270,7 @@ const SingleAd = () => {
                                                 size="normal"
                                             />
                                         </form>
+                                        )}
                                     </>
                                 ) : (
                                     /* Show login prompt for messaging if not logged in - with improved styling */

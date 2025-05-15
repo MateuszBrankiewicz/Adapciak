@@ -24,11 +24,8 @@ const registerFormSchema = z.object({
         .string()
         .min(1, "Potwierdzenie hasła jest wymagane.")
         .max(32, "Hasło może mieć maksymalnie 32 znaki."),
-    street: z.string().min(1,"Ulica jest wymagana"),
-    postalCode: z.string().regex(/^\d{2}-\d{3}$/, "Niepoprawny kod pocztowy"),
     voivodeship: z.string().min(1, "Wojewodztwo jest wymagane"),
     city: z.string().min(1,"Miasto jest wymagane"),
-    homeNumber: z.string().min(1,"Numer jest wymagany"),
     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
     firstName: z.string().min(1, "Imie jest wymagane"),
     lastName: z.string().min(1,"Nazwusko jest wymagane")

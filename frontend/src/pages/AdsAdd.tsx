@@ -62,7 +62,6 @@ const AdsAdd = () => {
                     "Content-Type": "application/json",
                 },
             });
-            console.log(response.data);
             setSubmitSuccess(true);
             
             // Przekieruj po 2 sekundach
