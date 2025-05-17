@@ -1,11 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { useAd } from "../hooks/adHooks";
-import { Slider } from "../components/Slider";
 import axios from "axios";
-import { checkToken } from "../hooks/authHooks";
 import { useState } from "react";
-import Button from "../components/Button";
-import NavigationBar from "../components/NavigationBar";
+import NavigationBar from "../../components/layout/Navigation/NavigationBar";
+import Button from "../../components/ui/common/Button/Button";
+import { Slider } from "../../components/ui/common/Slider/Slider";
+import { useAd } from "../../hooks/api/adHooks";
+import { checkToken } from "../../hooks/api/authHooks";
 
 const SingleAd = () => {
     const {id} = useParams();
@@ -132,7 +132,7 @@ const SingleAd = () => {
                         </div>
 
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8 flex justify-center items-center">
-                            <Slider data={data?.images.map((img) => img.url) || []} />
+                            <Slider data={data?.images.map((img: { url: any; }) => img.url) || []} />
                         </div>
 
                         <div className="bg-white p-8 rounded-lg shadow-sm mb-8">

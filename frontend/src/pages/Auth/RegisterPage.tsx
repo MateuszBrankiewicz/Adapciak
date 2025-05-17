@@ -1,12 +1,12 @@
 import { UseFormSetError } from "react-hook-form";
-import { registerFormSchema, RegisterFormSchema } from "../types/formSchemas";
-import Form from "../components/Form";
-import InputComponent from "../components/InputComponent";
-import Button from "../components/Button";
-import { useRegisterUser } from "../hooks/authHooks";
-import SelectWithSearch from "../components/SelectWithSearch";
-import { useVoivodeships } from "../hooks/formFillersHooks";
+import Form from "../../components/ui/common/Form/Form";
+import InputComponent from "../../components/ui/common/Input/InputComponent";
+import Button from "../../components/ui/common/Button/Button";
+import SelectWithSearch from "../../components/ui/common/Select/SelectWithSearch";
+import { useVoivodeships } from "../../hooks/formFillersHooks";
 import { Link } from "react-router-dom";
+import { registerFormSchema, RegisterFormSchema } from "../../types/schemas/formSchemas";
+import { useRegisterUser } from "../../hooks/api/authHooks";
 
 const RegisterPage = () => {
     const { registerUser } = useRegisterUser();

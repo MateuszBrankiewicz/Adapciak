@@ -1,16 +1,16 @@
 
 import './App.css'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import HomePage from './pages/HomePage'
-import RegisterPage from './pages/RegisterPage'
-import TestPage from './pages/TestPage'
-import  AdsAdd  from './pages/AdsAdd'
-import ShowAds from './pages/ShowAds'
+import LoginPage from './pages/Auth/LoginPage'
+import TestPage from './pages/Utility/TestPage'
+import  AdsAdd  from './pages/Ad/AdsAdd'
+import ShowAds from './pages/Ad/ShowAds'
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import PrivateRoute from './components/PrivateRoute'
-import SingleAd from './pages/SingleAd'
-import MessagePage from './pages/MessagePage'
+import MessagePage from './pages/Message/MessagePage'
+import SingleAd from './pages/Ad/SingleAd'
+import RegisterPage from './pages/Auth/RegisterPage'
+import HomePage from './pages/Utility/HomePage'
 function App() {
   
   return (

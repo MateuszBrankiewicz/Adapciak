@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { checkToken } from "../hooks/authHooks";
+import { checkToken } from "../hooks/api/authHooks";
 
 import { ReactNode } from "react";
 

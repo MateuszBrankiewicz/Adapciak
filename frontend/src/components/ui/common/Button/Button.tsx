@@ -1,4 +1,4 @@
-import "../App.css";
+import '../../../../App.css'
 type ButtonProps = {
     type?: "button" | "submit" | "reset";
     style? : "primary" | "secondary";

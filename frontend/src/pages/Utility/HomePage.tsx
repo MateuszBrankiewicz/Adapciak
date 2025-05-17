@@ -1,5 +1,5 @@
-import NavigationBarNoAuth from "../components/NavigationBarNoAuth";
 import { Link } from "react-router-dom";
+import NavigationBarNoAuth from "../../components/layout/Navigation/NavigationBarNoAuth";
 
 const HomePage = () => {
     return (

@@ -1,4 +1,4 @@
-import { Message } from "../types/message.ts";
+import { Message } from "../../types/models/message.ts";
 interface MessageList {
   messages: Message[],
   fetchConversation: (adId: string) => void,

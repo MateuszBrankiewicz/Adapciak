@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { checkToken } from "../hooks/authHooks";
+import { checkToken } from "../../../hooks/api/authHooks";
 import NavigationBarAuth from "./NavigationBarAuth";
 import NavigationBarNoAuth from "./NavigationBarNoAuth";
 

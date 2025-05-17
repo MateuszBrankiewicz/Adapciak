@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import NavigationBar from "../components/NavigationBar"
-import { checkToken } from "../hooks/authHooks";
-import {Message} from "../types/message.ts"
-import MessageList from "../components/MessageList.tsx";
-import Conversation from "../components/Conversation.tsx";
+import NavigationBar from "../../components/layout/Navigation/NavigationBar.tsx"
+import { checkToken } from "../../hooks/api/authHooks.ts";
+import {Message} from "../../types/models/message.ts"
+import MessageList from "../../components/ui/MessageList.tsx";
+import Conversation from "../../components/ui/Conversation.tsx";
 const MessagePage = () => {
     const [isConversationOpen, setIsConversationOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);

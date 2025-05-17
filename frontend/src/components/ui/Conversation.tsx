@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Message } from "../types/message";
-import Button from "./Button";
+import Button from "./common/Button/Button";
 
 interface IConversation {
   conversation: Message[],

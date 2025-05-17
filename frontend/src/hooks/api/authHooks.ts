@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { LoginFormSchema, RegisterFormSchema } from "../types/formSchemas";
+import { LoginFormSchema, RegisterFormSchema } from "../../types/schemas/formSchemas";
 import { UseFormSetError } from "react-hook-form";
 
 const fetchMe = async () => {

@@ -1,11 +1,11 @@
 import { UseFormSetError } from 'react-hook-form';
-import { loginFormSchema, LoginFormSchema } from '../types/formSchemas';
-import '../App.css';
-import InputComponent from '../components/InputComponent';
-import Form from '../components/Form';
+import { loginFormSchema, LoginFormSchema } from '../../types/schemas/formSchemas';
+import '../../App.css'
+import InputComponent from '../../components/ui/common/Input/InputComponent';
+import Form from '../../components/ui/common/Form/Form';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
-import { useLoginUser } from '../hooks/authHooks';
+import Button from '../../components/ui/common/Button/Button';
+import { useLoginUser } from '../../hooks/api/authHooks';
 
 const LoginPage = () => {
   const { loginUser } = useLoginUser();

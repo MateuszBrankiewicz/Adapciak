@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
-import NavigationBar from "../components/NavigationBar";
+import NavigationBar from "../../components/layout/Navigation/NavigationBar";
 import axios from "axios";
-import { checkToken } from "../hooks/authHooks";
-import NavigationBarNoAuth from "../components/NavigationBarNoAuth";
-import Button from "../components/Button";
-import SearchMobile from "../components/SearchMobile";
+import { checkToken } from "../../hooks/api/authHooks";
+import NavigationBarNoAuth from "../../components/layout/Navigation/NavigationBarNoAuth";
+import Button from "../../components/ui/common/Button/Button";
 import { Link } from "react-router-dom";
-import SelectWithSearch2 from "../components/SelectWithSearch2";
-import InputComponent2 from "../components/InputComponent2";
-import { Slider } from "../components/Slider";
+import SelectWithSearch2 from "../../components/ui/common/Select/SelectWithSearch2";
+import InputComponent2 from "../../components/ui/common/Input/InputComponent2";
+import { Slider } from "../../components/ui/common/Slider/Slider";
 
 export default function MobileSearchForm() {
     const [isMobile, setIsMobile] = useState(true);
     const [showSearch, setShowSearch] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [category, setCategory] = useState("");
-    const [size, setSize] = useState("");
-    const [district, setDistrict] = useState("");
-    const [city, setCity] = useState("");
+
     interface Ad {
         _id: string;
         title: string;

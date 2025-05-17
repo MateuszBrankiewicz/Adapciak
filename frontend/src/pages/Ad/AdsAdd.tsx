@@ -1,11 +1,11 @@
-import Form2 from "../components/Form2";
-import InputComponent2 from "../components/InputComponent2";
-import NavigationBar from "../components/NavigationBar";
-import {AdsAddSchema, adsAddSchema} from "../types/formSchemas";
-import Button from "../components/Button";
+import Form2 from "../../components/ui/common/Form/Form2";
+import InputComponent2 from "../../components/ui/common/Input/InputComponent2";
+import NavigationBar from "../../components/layout/Navigation/NavigationBar";
+import {AdsAddSchema, adsAddSchema} from "../../types/schemas/formSchemas";
+import Button from "../../components/ui/common/Button/Button";
 import {useState} from "react";
 import axios from "axios";
-import SelectWithSearch from "../components/SelectWithSearch";
+import SelectWithSearch from "../../components/ui/common/Select/SelectWithSearch";
 import {useQuery} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
