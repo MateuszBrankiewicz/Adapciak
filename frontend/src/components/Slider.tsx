@@ -22,7 +22,7 @@ export const Slider = ({ data }: SliderProps) => {
   }, [currentSlide, nextSlide]);
 
   return (
-    <div className="mt-2 relative w-[600px] h-[400px] overflow-hidden rounded-lg shadow-lg">
+    <div className="mt-2 relative w-full h-full overflow-hidden rounded-lg shadow-lg">
       <div
          className="flex transition-transform duration-500 ease-in-out w-full h-full"
 

@@ -2,28 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar"
 import { checkToken } from "../hooks/authHooks";
-// Button is used in the JSX below
-import Button from "../components/Button";
+import {Message} from "../types/message.ts"
+import MessageList from "../components/MessageList.tsx";
+import Conversation from "../components/Conversation.tsx";
 const MessagePage = () => {
-    interface Message {
-        _id: string;
-        sender: {
-            _id: string;
-            firstName: string;
-        };
-        receiver: {
-            _id: string;
-            firstName: string;
-        };
-        content: string;
-        adId:{
-            _id: string;
-            title: string;
-        }
-        read: boolean;
-        createdAt: string;
-        updatedAt: string;
-    }
+    const [isConversationOpen, setIsConversationOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [conversation,setConversation] = useState<Message[]>([]);
     const [conversationId, setConversationId] = useState<string | null>(null);
@@ -68,16 +51,33 @@ const MessagePage = () => {
     }
     const fetchConversation = async (conversationId: string) => {
         try {
-            const response = await axios.get(`http://localhost:3000/message/${conversationId}`, { withCredentials: true }) ;
+            const response = await axios.get(`http://localhost:3000/message/${conversationId}`, { withCredentials: true });
             const message = response.data as Message[];
-            setConversation(message);
-            setConversationId(message[0]._id);
+            
+            if (message && message.length > 0) {
+                setConversation(message);
+                const lastMessageId = message[message.length-1]._id;
+                setConversationId(lastMessageId);
+                
+               
+            }
         } catch (error) {
             console.error("Error fetching conversation:", error);
         }
     };
 
-    
+    const setAsRead = async (messageId: string) => {
+        try {
+            await axios.put(`http://localhost:3000/message/read/${messageId}`, {}, { withCredentials: true });
+            setMessages((prevMessages) => 
+                prevMessages.map((message) => 
+                    message.messageId === messageId ? { ...message, read: true } : message
+                )
+            );
+        } catch (error) {
+            console.error("Error setting message as read:", error);
+        }
+    }
     useEffect(() => {
         let intervalId: number;
         
@@ -123,66 +123,28 @@ const MessagePage = () => {
         <div className="flex flex-col h-screen">
             <NavigationBar/>
             <h1 className="px-4 py-2 text-2xl font-bold">Wiadomości</h1>
-            <div className="flex flex-1 p-4 overflow-hidden">
+            <div className="md:flex flex-1 p-4 overflow-hidden hidden">
                 <div className="w-1/3 bg-white shadow-md rounded-lg p-4 mr-4 overflow-y-auto max-h-[calc(100vh-150px)]">
-                    {messages.length > 0 ? messages.map((message) => (
-                        <div 
-                            onClick={() => fetchConversation(message.adId._id)} 
-                            key={message._id} 
-                            className={`border-b border-gray-200 py-3 px-2 mb-2 cursor-pointer hover:bg-gray-50 rounded ${message.read ? "bg-gray-100" : "bg-gray-300"}`}
-                        >
-                            <h2 className="text-gray-900 text-xl">{message.adId.title}</h2>
-                            <p className="text-gray-600">{message.receiver.firstName}</p>
-                            <p className="text-gray-400 text-sm">{new Date(message.createdAt).toLocaleString()}</p>
-                        </div>
-                    )) : (
-                        <div className="text-center py-8 text-gray-500">
-                            Brak wiadomości
-                        </div>
-                    )}
+                 <MessageList messages={messages} fetchConversation={fetchConversation} setAsRead={setAsRead}/>
                 </div>
                 <div className="w-2/3 bg-white shadow-md rounded-lg p-4 flex-1 overflow-y-auto max-h-[calc(100vh-150px)]">
-                    {conversationId ? (
-                        <div className="h-full flex flex-col">
-                            
-                            <div className="flex-1">
-                                    {conversation.map((message) => (
-                                        <div 
-                                            key={message._id} 
-                                            className={`mb-4 p-3 rounded-lg max-w-[70%] ${message.sender._id === authData?.data ? 
-                                                "bg-blue-100 ml-auto rounded-tr-none" : 
-                                                "bg-gray-100 mr-auto rounded-tl-none"}`}
-                                        >
-                                            <p className="text-gray-900">{message.content}</p>
-                                            <p className="text-gray-400 text-sm">{new Date(message.createdAt).toLocaleString()}</p>
-                                        </div>
-                                    ))}
-                                    </div>
-                            <div className="flex items-center mt-4">
-                                <input 
-                                    type="text" 
-                                    className="flex-1 border border-gray-300 rounded-lg p-2 mr-2"
-                                    placeholder="Napisz wiadomość..."
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {
-                                            e.preventDefault();
-                                            sendMessage();
-                                        }
-                                    }}
-                                />
-                                <Button size="small" type="button" onClick={sendMessage} text="Wyslij"/>
-                                </div>
-                        </div>
-                    ) : (
-                        <div className="h-full flex items-center justify-center">
-                            <h2 className="text-gray-500 text-xl">Wybierz rozmowę</h2>
-                        </div>
-                    )}
+                   <Conversation conversation={conversation} userId={authData?.data as string} conversationId={conversationId} newMessage={newMessage} setNewMessage={setNewMessage} sendMessage={sendMessage}/>
                 </div>
+            </div>
+            <div className="md:hidden flex-1 p-4 overflow-hidden flex">
+              {!isConversationOpen ? ( 
+                <div className="w-full bg-white shadow-md rounded-lg p-4 mr-4 overflow-y-auto max-h-[calc(100vh-150px)]" onClick={() => setIsConversationOpen(!isConversationOpen)}>
+                 <MessageList messages={messages} fetchConversation={fetchConversation} setAsRead={setAsRead}/>
+                </div>
+              ):(
+                
+                <div className="w-full bg-white shadow-md rounded-lg p-4 flex-1 overflow-y-auto max-h-[calc(100vh-150px)]">
+                  <span onClick={() => setIsConversationOpen(!isConversationOpen)} className="material-icons">arrow_back</span>
+                   <Conversation conversation={conversation} userId={authData?.data as string} conversationId={conversationId} newMessage={newMessage} setNewMessage={setNewMessage} sendMessage={sendMessage}/>
+                </div>
+              )}
             </div>
         </div>
     );
     }
-export default MessagePage;
+ export default MessagePage;

@@ -1,6 +1,5 @@
 import { useState, FC } from "react";
 
-// Define interfaces for the props and search data
 interface SearchData {
   searchQuery: string;
   category: string;

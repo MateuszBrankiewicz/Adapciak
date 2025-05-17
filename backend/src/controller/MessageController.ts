@@ -33,5 +33,9 @@ export const createMessage = async (req:Request, res: Response) => {
      
     res.status(result.status).json(result.data);
 }
-
+export const setReaded = async (req:Request, res:Response) => {
+    const messageId = req.params.id;
+    const result = await MessageService.setReaded(messageId);
+    res.status(result.status).json(result.data);
+}
 export const deleteMessage = async (req:Request, res:Response) => {}    

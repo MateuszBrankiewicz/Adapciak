@@ -34,13 +34,20 @@ export default function MobileSearchForm() {
     const [voivodeship, setVoivodeship] = useState("");
     const [filters, setFilters] = useState({
         searchQuery: "",
-        category: "",
+        pet: "",
         size: "",
         voivodeship: "",
-        district: "",
+        age: "",
         city: ""
     });
-    
+
+    const updateFilter = (name: string, value: string) => {
+        setFilters(prevFilters => ({
+            ...prevFilters,
+            [name]: value
+        }));
+    };
+
     useEffect(() => {
         const resize = () => {
             if (window.innerWidth <= 760) {
@@ -53,7 +60,7 @@ export default function MobileSearchForm() {
         window.addEventListener("resize", resize);
         return () => window.removeEventListener("resize", resize);
     }, []);
-    
+
     useEffect(() => {
         axios
             .get("http://localhost:3000/ads")
@@ -66,7 +73,28 @@ export default function MobileSearchForm() {
     }, []);
 
     const handleFilters = () => {
-        // Implementacja filtrowania
+       //console.log(filters);
+    let query = "http://localhost:3000/ads/filter";
+    const queryParams = [];
+
+    if (filters.searchQuery) queryParams.push(`search=${encodeURIComponent(filters.searchQuery)}`);
+    if (filters.pet) queryParams.push(`pet=${encodeURIComponent(filters.pet)}`);
+    if (filters.size) queryParams.push(`size=${encodeURIComponent(filters.size)}`);
+    if (filters.voivodeship) queryParams.push(`voivodeship=${encodeURIComponent(filters.voivodeship)}`);
+    if (filters.age) queryParams.push(`age=${encodeURIComponent(filters.age)}`);
+    if (filters.city) queryParams.push(`city=${encodeURIComponent(filters.city)}`);
+
+    if (queryParams.length > 0) {
+        query += `?${queryParams.join("&")}`;
+    }
+    console.log(query);
+    axios.get(query)
+        .then((response) => {
+            setData(response.data as Ad[]);
+        })
+        .catch((error) => {
+            console.error("Error fetching filtered data:", error);
+        });
     }
 
     return (
@@ -84,8 +112,57 @@ export default function MobileSearchForm() {
                         </button>
 
                         {showSearch && (
-                            <SearchMobile onSearch={handleFilters}
-                                onClose={() => setShowSearch(false)} />
+                            <div className="w-full flex flex-col mt-3">
+                                <div className="flex-1 min-w-[180px]">
+                                    <SelectWithSearch2
+                                        name="voivodeship"
+                                        label="Województwo"
+                                        data={["Lubelskie", "Mazowieckie", "Śląskie"]}
+                                        onChange={(value) => updateFilter("voivodeship", value)}
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-[180px]">
+                                    <InputComponent2 type={"text"} label={"Miasto"} name={"city"}  placeholder={"np. Warszawa"} 
+                                    onChange={(value) => updateFilter("city",value)}
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-[180px]">
+                                    <SelectWithSearch2 name={"pet"} label={"Gatunek"} data={["dog","cat"]} 
+                                    onChange={(value) => updateFilter("pet",value)}/>
+                                    
+                                </div>
+                                <div className="flex-1 min-w-[150px]">
+                                    <SelectWithSearch2 name={"size"} label={"Rozmiar"} data={["small", "medium","big"]} 
+                                    onChange={(value) => updateFilter("size",value)}
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-[150px]">
+                                    <SelectWithSearch2 name={"age"} label={"Wiek"} data={["puppy","adult","senior"]} 
+                                    onChange={(value) => updateFilter("age",value)}
+                                    />
+                                </div>
+
+
+                                <div className="flex flex-wrap sm:flex-nowrap end gap-4">
+                                    <div className="flex-grow w-full min-w-[180px] mb-3.5">
+                                        <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+                                            Wyszukaj frazę
+                                        </label>
+                                        <input
+                                            type="search"
+                                            name="search"
+                                            id="search"
+                                            placeholder="Wpisz czego szukasz..."
+                                            className="p-3.5 m-2 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
+                                            onChange={(e) => updateFilter("searchQuery", e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex-shrink-0 w-full sm:w-auto">
+                                        <Button onClick={handleFilters} type="button" size="normal" text="Zastosuj filtry" />
+                                    </div>
+                                </div>
+                            </div>
+
                         )}
                     </div>
                 ) : (
@@ -108,7 +185,7 @@ export default function MobileSearchForm() {
                                 <SelectWithSearch2 name={"age"} label={"Wiek"} data={["Szczenię", "Dorosły", "Senior"]} />
                             </div>
                         </div>
-    
+
                         {/* Sekcja wyszukiwania i przycisku */}
                         <div className="flex flex-wrap sm:flex-nowrap items-end gap-4">
                             <div className="flex-grow w-full sm:w-auto mb-3.5">
@@ -146,7 +223,7 @@ export default function MobileSearchForm() {
                                     <Link to={`/ads/${ad._id}`} className="md:w-3/5 p-6 flex flex-col justify-between hover:bg-gray-50">
                                         <div>
                                             <h2 className="text-2xl font-bold text-gray-800 mb-2">{ad.title}</h2>
-                                            <p className="text-gray-600 mb-4">{ad.description.length > 120 ? 
+                                            <p className="text-gray-600 mb-4">{ad.description.length > 120 ?
                                                 `${ad.description.substring(0, 120)}...` : ad.description}</p>
                                             <div className="flex items-center text-gray-500 text-sm">
                                                 <span className="material-icons text-sm mr-1">location_on</span>
@@ -164,7 +241,7 @@ export default function MobileSearchForm() {
                         ))
                     )}
                 </div>
-                
+
                 {/* Przycisk dodawania ogłoszenia */}
                 <div className="fixed bottom-6 right-6">
                     <Link to="/ads/add">

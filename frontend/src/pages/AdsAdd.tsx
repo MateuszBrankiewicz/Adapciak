@@ -36,6 +36,8 @@ const AdsAdd = () => {
     }
     
     const onSubmit = async (data: AdsAddSchema) => {
+                console.log(data);
+
         setIsSubmitting(true);
         setSubmitError("");
         
@@ -54,7 +56,6 @@ const AdsAdd = () => {
                 url: image,
             })),
         }
-        
         try {
             const response = await axios.post("http://localhost:3000/ads/create", completeData, {
                 withCredentials: true,
@@ -189,7 +190,7 @@ const AdsAdd = () => {
                                                         label="Rodzaj zwierzęcia"
                                                         placeholder="Wybierz rodzaj"
                                                         register={register}
-                                                        data={Object.values(translatePetOptions)}
+                                                        data={["dog","cat"]}
                                                         error={errors.pet}
                                                     />
                                                 </div>
@@ -200,7 +201,7 @@ const AdsAdd = () => {
                                                         label="Wiek"
                                                         placeholder="Wybierz wiek"
                                                         register={register}
-                                                        data={Object.values(translateAgeOptions)}
+                                                        data={["puppy","adult"]}
                                                         error={errors.age}
                                                     />
                                                 </div>
@@ -211,7 +212,7 @@ const AdsAdd = () => {
                                                         label="Rozmiar"
                                                         placeholder="Wybierz rozmiar"
                                                         register={register}
-                                                        data={Object.values(translateSizeOptions)}
+                                                        data={["small","medium"]}
                                                         error={errors.size}
                                                     />
                                                 </div>

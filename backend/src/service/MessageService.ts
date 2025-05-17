@@ -1,5 +1,5 @@
 import Message, { IMessage } from "../model/Message";
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
 
 async function fetchAllMessages(userId: string) {
     try {
@@ -84,11 +84,31 @@ async function createMessage(message:IMessage, userId: string) {
         return { status: 500, data: { error: "Nie udało się dodać wiadomości" } };
     }
 }
-
+async function setReaded(messageId:string) {
+    try {
+        const message = await Message.updateOne(
+            { _id: new mongoose.Types.ObjectId(messageId) },
+            { $set: { read: true } }
+        );
+        const tryToFindMessage = await Message.findById(messageId);
+        
+        // Sprawdzamy czy dokument w ogóle istnieje
+        if (message.matchedCount === 0 || !tryToFindMessage) {
+            return { status: 404, data: { error: "Nie znaleziono wiadomości" } };
+        }
+        
+        // Dokument istnieje, ale możliwe że pole read już było ustawione na true
+        return { status: 200, data: { message: "Wiadomość oznaczona jako przeczytana" } };
+    } catch (error) {
+        console.log("error", error);
+        return { status: 500, data: { error: "Nie udało się oznaczyć wiadomości jako przeczytanej" } };
+    }
+}
 async function deleteMessage(messageId:string){}
 export const MessageService = {
     fetchAllMessages,
     getMessage,
     createMessage,
-    deleteMessage
+    deleteMessage,
+    setReaded
 }

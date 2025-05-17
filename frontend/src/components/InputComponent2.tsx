@@ -16,6 +16,7 @@ type InputProps<T extends FieldValues> = {
     error?: FieldError;
     maxLength?: number;
     margin?: string;
+    onChange?: (value : string) => void;
 };
 const InputComponent2 = <T extends FieldValues>({
     type,
@@ -27,7 +28,8 @@ const InputComponent2 = <T extends FieldValues>({
     register,
     error,
     maxLength,
-    margin
+    margin,
+    onChange
 }: InputProps<T>) => {
     return (
         <div className='container  '>
@@ -43,7 +45,7 @@ const InputComponent2 = <T extends FieldValues>({
             autoComplete={autocomplete}
             disabled={disabled}
             className={`bg-white border-main-color border rounded-md shadow-2xs text-sm  block w-10/11 m-2 p-3 mb-${margin}`}
-
+            onChange={onChange ? (e) => onChange(e.target.value) : undefined}
             />
             {error && <p className='text-red-600'>{error.message}</p>}
         </div>
