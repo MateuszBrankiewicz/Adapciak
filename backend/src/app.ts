@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes';
 import adRoutes from './routes/adRoutes';
 import formFillersRoutes from './routes/formFillersRoutes';
 import messageRoutes from './routes/messageRoutes';
+import favoriteRoutes from './routes/favoriteRoute'
 const app = express();
 
 app.use(cookieParser());
@@ -32,4 +33,6 @@ app.use('/user', authRoutes);
 app.use('/ads', adRoutes);
 app.use('/formFillers', formFillersRoutes);
 app.use('/message', auth, messageRoutes);
+app.use('/favorite',auth,favoriteRoutes);
+
 export default app;

@@ -11,6 +11,7 @@ import MessagePage from './pages/Message/MessagePage'
 import SingleAd from './pages/Ad/SingleAd'
 import RegisterPage from './pages/Auth/RegisterPage'
 import HomePage from './pages/Utility/HomePage'
+import FavoriteAd from './pages/Ad/FavoriteAd'
 function App() {
   
   return (
@@ -32,7 +33,11 @@ function App() {
             </PrivateRoute>
           }></Route>
         <Route path='/messages' element={<PrivateRoute><MessagePage/></PrivateRoute>}></Route>
-
+          <Route path="/favorites" element={
+            <PrivateRoute>
+              <FavoriteAd />
+            </PrivateRoute>
+          }></Route>
 
         </Routes>
       </BrowserRouter>
