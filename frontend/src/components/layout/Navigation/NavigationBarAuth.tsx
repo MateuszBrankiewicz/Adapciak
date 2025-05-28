@@ -12,7 +12,6 @@ const NavigationBarAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   
-  // Sprawdzanie czy użytkownik jest zalogowany
   useEffect(() => {
     axios
       .get("http://localhost:3000/user/check", { withCredentials: true })
@@ -31,7 +30,6 @@ const NavigationBarAuth = () => {
       })
       .catch((error) => {
         if (error.response?.status === 401) {
-          // Użytkownik nie jest zalogowany
         } else {
           console.log("Error checking login:", error);
           console.clear();
@@ -40,7 +38,6 @@ const NavigationBarAuth = () => {
       });
   }, []);
   
-  // Dostosowywanie widoku do szerokości ekranu
   useEffect(() => {
     const resize = () => {
       if (window.innerWidth <= 768) {
@@ -55,7 +52,6 @@ const NavigationBarAuth = () => {
     return () => window.removeEventListener("resize", resize);
   }, []);
   
-  // Zamykanie menu po kliknięciu poza nim
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -69,7 +65,6 @@ const NavigationBarAuth = () => {
     };
   }, []);
   
-  // Wylogowywanie użytkownika
   const handleLogout = async () => {
     try {
       await axios.get("http://localhost:3000/user/logout", { withCredentials: true });
@@ -81,7 +76,6 @@ const NavigationBarAuth = () => {
     }
   };
   
-  // Animacje menu
   const menuVariants = {
     hidden: { opacity: 0, y: -10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
@@ -142,14 +136,14 @@ const NavigationBarAuth = () => {
               </Link>
               
               <Link 
-                to="/comments" 
+                to="/yourAdds" 
                 className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                  isActive('/comments')
+                  isActive('/yourAdds')
                     ? 'text-main-color font-semibold'
                     : 'text-gray-700 hover:text-main-color hover:bg-gray-50'
                 }`}
               >
-                Komentarze
+                Twoje Ogłoszenia
               </Link>
             </div>
           )}

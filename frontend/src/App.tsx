@@ -12,6 +12,9 @@ import SingleAd from './pages/Ad/SingleAd'
 import RegisterPage from './pages/Auth/RegisterPage'
 import HomePage from './pages/Utility/HomePage'
 import FavoriteAd from './pages/Ad/FavoriteAd'
+import YourAdds from './pages/Ad/YourAdds'
+import EditAd from './pages/Ad/EditAd'
+import EditProfile from './pages/Auth/EditProfile'
 function App() {
   
   return (
@@ -38,7 +41,21 @@ function App() {
               <FavoriteAd />
             </PrivateRoute>
           }></Route>
-
+         <Route path="/yourAdds" element={
+            <PrivateRoute>
+              <YourAdds />
+            </PrivateRoute>
+          }></Route>
+          <Route path="/ads/edit/:id" element={
+            <PrivateRoute>
+              <EditAd />
+            </PrivateRoute>
+          }></Route>
+          <Route path='/profile' element={
+            <PrivateRoute>
+              <EditProfile/>
+            </PrivateRoute>
+          }/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

@@ -4,6 +4,7 @@ export interface ImageData {
   }
   
    export interface Ad {
+       
         _id: string;
         title: string;
         description: string;
@@ -15,5 +16,23 @@ export interface ImageData {
         voivodeship: string;
         pet: string;
         age:string;
-        size: string
+        size: string;
+        number: string;
+        note: string;
+         views: number;
+        createdAt: string;
+    }
+
+    export interface PaginationInfo {
+        currentPage: number;
+        totalPages: number;
+        totalAds: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+        limit: number;
+    }
+
+    export interface PaginatedAdsResponse {
+        ads: Ad[];
+        pagination: PaginationInfo;
     }

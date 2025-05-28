@@ -97,3 +97,16 @@ export const usePostFavorite = () => {
     }
   });
 }
+
+const fetchUserAds = async (): Promise<Ad[]> => {
+  const response = await axios.get<Ad[]>(`http://localhost:3000/ads/user`, {withCredentials: true});
+  return response.data;
+};
+
+export const useUserAds = () => {
+  return useQuery<Ad[]>({
+    queryKey: ["userAds"],
+    queryFn: fetchUserAds,
+    retry: false
+  });
+};

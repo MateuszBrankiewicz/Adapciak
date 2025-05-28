@@ -8,8 +8,9 @@ import { Link } from "react-router-dom";
 import SelectWithSearch2 from "../../components/ui/common/Select/SelectWithSearch2";
 import InputComponent2 from "../../components/ui/common/Input/InputComponent2";
 import { Slider } from "../../components/ui/common/Slider/Slider";
-import { Ad } from "../../types/models/adTypes";
+import { Ad, PaginatedAdsResponse, PaginationInfo } from "../../types/models/adTypes";
 import FavoriteButton from "../../components/ui/common/Button/FavoriteButton";
+import Pagination from "../../components/ui/common/Pagination/Pagination";
 
 export default function MobileSearchForm() {
     const [isMobile, setIsMobile] = useState(true);
@@ -18,6 +19,14 @@ export default function MobileSearchForm() {
     const { data, isError } = checkToken();
     const isLoggedIn = !isError;
     const [dataAds, setData] = useState<Ad[]>([]);
+    const [pagination, setPagination] = useState<PaginationInfo>({
+        currentPage: 1,
+        totalPages: 1,
+        totalAds: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+        limit: 2
+    });
     const [filters, setFilters] = useState({
         searchQuery: "",
         pet: "",
@@ -48,46 +57,65 @@ export default function MobileSearchForm() {
     }, []);
 
     useEffect(() => {
-        setIsLoading(true);
-        axios
-            .get("http://localhost:3000/ads")
-            .then((response) => {
-                setData(response.data as []);
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-                setIsLoading(false);
-            });
+        fetchAds(1);
     }, []);
 
-    const handleFilters = () => {
-       //console.log(filters);
-    let query = "http://localhost:3000/ads/filter";
-    const queryParams = [];
-
-    if (filters.searchQuery) queryParams.push(`search=${encodeURIComponent(filters.searchQuery)}`);
-    if (filters.pet) queryParams.push(`pet=${encodeURIComponent(filters.pet)}`);
-    if (filters.size) queryParams.push(`size=${encodeURIComponent(filters.size)}`);
-    if (filters.voivodeship) queryParams.push(`voivodeship=${encodeURIComponent(filters.voivodeship)}`);
-    if (filters.age) queryParams.push(`age=${encodeURIComponent(filters.age)}`);
-    if (filters.city) queryParams.push(`city=${encodeURIComponent(filters.city)}`);
-
-    if (queryParams.length > 0) {
-        query += `?${queryParams.join("&")}`;
-    }
-    console.log(query);
-    setIsLoading(true);
-    axios.get(query)
-        .then((response) => {
-            setData(response.data as Ad[]);
+    const fetchAds = async (page: number = 1) => {
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`http://localhost:3000/ads?page=${page}`);
+            const data = response.data as PaginatedAdsResponse;
+            setData(data.ads);
+            setPagination(data.pagination);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setData([]);
+        } finally {
             setIsLoading(false);
-        })
-        .catch((error) => {
+        }
+    };
+
+    const handleFilters = async (page: number = 1) => {
+        let query = "http://localhost:3000/ads/filter";
+        const queryParams = [];
+
+        if (filters.searchQuery) queryParams.push(`search=${encodeURIComponent(filters.searchQuery)}`);
+        if (filters.pet) queryParams.push(`pet=${encodeURIComponent(filters.pet)}`);
+        if (filters.size) queryParams.push(`size=${encodeURIComponent(filters.size)}`);
+        if (filters.voivodeship) queryParams.push(`voivodeship=${encodeURIComponent(filters.voivodeship)}`);
+        if (filters.age) queryParams.push(`age=${encodeURIComponent(filters.age)}`);
+        if (filters.city) queryParams.push(`city=${encodeURIComponent(filters.city)}`);
+        
+        queryParams.push(`page=${page}`);
+
+        if (queryParams.length > 0) {
+            query += `?${queryParams.join("&")}`;
+        }
+        
+        setIsLoading(true);
+        try {
+            const response = await axios.get(query);
+            const data = response.data as PaginatedAdsResponse;
+            setData(data.ads);
+            setPagination(data.pagination);
+        } catch (error) {
             console.error("Error fetching filtered data:", error);
+            setData([]);
+        } finally {
             setIsLoading(false);
-        });
-    }
+        }
+    };
+
+    const handlePageChange = (page: number) => {
+        // Sprawdź czy mamy aktywne filtry
+        const hasActiveFilters = Object.values(filters).some(value => value !== "");
+        
+        if (hasActiveFilters) {
+            handleFilters(page);
+        } else {
+            fetchAds(page);
+        }
+    };
 
     return (
         <div className="w-full flex flex-col min-h-screen bg-gray-50">
@@ -174,7 +202,7 @@ export default function MobileSearchForm() {
                                     </div>
                                     <div className="w-full mt-2">
                                         <Button 
-                                            onClick={handleFilters} 
+                                            onClick={() => handleFilters(1)} 
                                             type="button" 
                                             size="big" 
                                             text="Zastosuj filtry" 
@@ -249,7 +277,7 @@ export default function MobileSearchForm() {
                             </div>
                             <div className="flex-shrink-0 w-full md:w-auto mt-2 md:mt-0">
                                 <Button 
-                                    onClick={handleFilters} 
+                                    onClick={() => handleFilters(1)} 
                                     type="button" 
                                     size="big" 
                                     text="Zastosuj filtry" 
@@ -325,6 +353,23 @@ export default function MobileSearchForm() {
                                 </div>
                             ))
                         )}
+                    </div>
+                )}
+
+                {/* Paginacja */}
+                {!isLoading && dataAds.length > 0 && (
+                    <div className="mt-12 mb-8">
+                        <Pagination
+                            currentPage={pagination.currentPage}
+                            totalPages={pagination.totalPages}
+                            onPageChange={handlePageChange}
+                            className="mb-4"
+                        />
+                        
+                        {/* Informacje o wynikach */}
+                        <div className="text-center text-gray-600 text-sm">
+                            Pokazano {((pagination.currentPage - 1) * pagination.limit) + 1} - {Math.min(pagination.currentPage * pagination.limit, pagination.totalAds)} z {pagination.totalAds} ogłoszeń
+                        </div>
                     </div>
                 )}
 

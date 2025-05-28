@@ -1,93 +1,87 @@
 
 import { Request, Response } from 'express'
-import User from "../model/User";
-import { registerUser, loginUser, getUserId } from '../service/AuthService'
-
-require('dotenv').config();
-const SECRET_KEY = process.env.SECRET || "Secret";
-import jwt, { JwtPayload } from 'jsonwebtoken'
-import { validationResult } from 'express-validator';
+import { 
+  handleUserRegistration,
+  handleUserLogin,
+  getUserInfo,
+  verifyUserToken 
+} from '../service/AuthService'
 
 
 export const login = async (req: Request, res: Response) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(401).json({ errors: errors.array() });
-  }
-  const { email, password } = req.body;
-
   try {
-    const user = await loginUser(email, password);
-    res.cookie('token', user.token, {
+    const authResult = await handleUserLogin(req);
+    
+    res.cookie('token', authResult.token, {
       maxAge: 3600000,
       httpOnly: true,
       path: '/', 
       sameSite: 'lax',
     });
-    res.status(200).json({
-      message: "Uzytkownik zalogowany",
-      token: user.token
+    
+     res.status(200).json({
+      message: authResult.message,
+      token: authResult.token
     });
-
-
   } catch (err) {
     res.status(400).json((err as Error).message);
+    return;
   }
 };
 
 export const register = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  console.log(req.body)
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      res.status(400).json('Email jest juz uzywany');
-      return;
-    }
-
-    const newUser = registerUser(req.body);
-
-    res.status(201).json('Uzytkownik zarejestrowany');
+    const message = await handleUserRegistration(req);
+     res.status(201).json(message);
   } catch (err) {
-    res.status(400).json((err as Error).message);
+    const errorMessage = (err as Error).message;
+    
+    if (errorMessage.includes('Błędy walidacji')) {
+      res.status(401).json({ errors: JSON.parse(errorMessage.replace('Błędy walidacji: ', '')) });
+      return;
+    } else if (errorMessage.includes('Email jest juz uzywany')) {
+      res.status(400).json(errorMessage);
+      return;
+    } else {
+      res.status(400).json(errorMessage);
+      return 
+    }
   }
 };
 
 export const getName = async (req: Request, res: Response) => {
-  const token = req.cookies.token;
-  if (!token) {
-    res.status(401).json('Brak tokenu');
-    return;
-  }
-
   try {
-    const userId = await getUserId(token);
-    const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json('Uzytkownik nie znaleziony');
-      return;
-    }
-    res.status(200).json({
-      name: user.firstName,
-    });
+    const userInfo = await getUserInfo(req.cookies.token);
+    res.status(200).json(userInfo);
+    return;
   } catch (err) {
-    res.status(400).json('Nieprawidlowy token');
+    const errorMessage = (err as Error).message;
+    
+    if (errorMessage === 'Brak tokenu') {
+       res.status(401).json(errorMessage);
+       return;
+    } else if (errorMessage === 'Uzytkownik nie znaleziony') {
+       res.status(404).json(errorMessage);
+       return;
+    } else {
+      res.status(400).json('Nieprawidlowy token');
+       return;
+    }
   }
 };
 export const checkLogged = async (req: Request, res: Response) => {
-  const token = req.cookies.token;
-  if (!token) {
-    res.status(401).json('False')
-    return;
-  }
   try {
-    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload ;
-    res.status(200).json(decoded._id);
+    const userId = await verifyUserToken(req.cookies.token);
+    res.status(200).json(userId);
+    return;
   } catch (err) {
-    res.status(400).json("False");
+   res.status(401).json("False");
+    return;
   }
 }
 export const logout = async (req: Request, res: Response) => {
-
   res.clearCookie('token');
   res.status(200).json('Wylogowano pomyślnie');
+  return;
 }

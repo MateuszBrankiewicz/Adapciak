@@ -4,7 +4,8 @@ import {
     FieldValues,
     useForm,
     UseFormRegister,
-    UseFormSetError
+    UseFormSetError,
+    DefaultValues
 } from "react-hook-form";
 import {ZodSchema} from "zod";
 type FormProps<T extends FieldValues> = {
@@ -18,6 +19,7 @@ type FormProps<T extends FieldValues> = {
     }) => React.ReactNode;
     tittle? : string;
     formStyle : string;
+    defaultValues?: DefaultValues<T>;
 };
 
 const Form2 = <T extends FieldValues>({
@@ -25,7 +27,8 @@ const Form2 = <T extends FieldValues>({
     onSubmit,
     children,
     tittle,
-    formStyle
+    formStyle,
+    defaultValues
 }: FormProps<T>) => {
     const {
         register,
@@ -34,7 +37,8 @@ const Form2 = <T extends FieldValues>({
         setError,
         
     } = useForm<T>({
-        resolver: zodResolver(schema)
+        resolver: zodResolver(schema),
+        defaultValues
     });
     return (
         
