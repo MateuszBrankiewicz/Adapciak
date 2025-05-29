@@ -57,7 +57,7 @@ const LoginPage = () => {
                     <a href="#" className="text-sm text-main-color hover:underline">Zapomniałeś hasła?</a>
                   </div>
                   
-                  <Button type='submit' style='primary' size='normal' text='Zaloguj się' />
+                  <Button type='submit' style='primary' size='big' text='Zaloguj się' />
                 </>
               )}
             </Form>

@@ -142,6 +142,7 @@ export const getUserInfo = async (token: string): Promise<{ name: string }> => {
   };
 }
 
+
 // Sprawdzanie tokenu
 export const verifyUserToken = async (token: string): Promise<string> => {
   if (!token) {

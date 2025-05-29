@@ -4,7 +4,8 @@ import {
   handleUserRegistration,
   handleUserLogin,
   getUserInfo,
-  verifyUserToken 
+  verifyUserToken,
+ 
 } from '../service/AuthService'
 
 
@@ -85,3 +86,4 @@ export const logout = async (req: Request, res: Response) => {
   res.status(200).json('Wylogowano pomyślnie');
   return;
 }
+

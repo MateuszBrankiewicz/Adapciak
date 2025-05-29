@@ -5,38 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NavigationBarAuth = () => {
   const location = useLocation();
-  const [userName, setUserName] = useState("");
+  const [userName] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+ 
   const userMenuRef = useRef<HTMLDivElement>(null);
   
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/user/check", { withCredentials: true })
-      .then((response) => {
-        const data = response.data as string;
-        if (data === "True") {
-          setIsLoggedIn(true);
-          axios
-            .get("http://localhost:3000/user/name", { withCredentials: true })
-            .then((response) => {
-              const data = response.data as { name: string };
-              setUserName(data.name);
-            })
-            .catch((error) => console.log("Error fetching username:", error));
-        }
-      })
-      .catch((error) => {
-        if (error.response?.status === 401) {
-        } else {
-          console.log("Error checking login:", error);
-          console.clear();
-        }
-        setIsLoggedIn(false);
-      });
-  }, []);
+  
   
   useEffect(() => {
     const resize = () => {
@@ -66,9 +42,11 @@ const NavigationBarAuth = () => {
   }, []);
   
   const handleLogout = async () => {
+    const confirmed = window.confirm("Czy chcesz sie wylogowac");
+    if(!confirmed) return;
     try {
       await axios.get("http://localhost:3000/user/logout", { withCredentials: true });
-      setIsLoggedIn(false);
+      
       setIsUserMenuOpen(false);
       window.location.href = "/";
     } catch (error) {
@@ -92,7 +70,7 @@ const NavigationBarAuth = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
+            <Link to="/ads" className="flex items-center">
               <h1 className="text-2xl font-extrabold">
                 Adapciak<span className="text-main-color">.pl</span>
               </h1>
@@ -101,6 +79,7 @@ const NavigationBarAuth = () => {
           
           {/* Desktop Navigation */}
           {!isMobile && (
+            <>
             <div className="hidden md:flex md:items-center md:space-x-6">
               <Link 
                 to="/ads" 
@@ -146,10 +125,10 @@ const NavigationBarAuth = () => {
                 Twoje Ogłoszenia
               </Link>
             </div>
-          )}
           
-          {/* User Section */}
-          <div className="flex items-center" ref={userMenuRef}>
+          
+        
+          <div className="flex " ref={userMenuRef}>
            
               <div className="relative">
                 <button
@@ -222,8 +201,8 @@ const NavigationBarAuth = () => {
               </div>
             
           </div>
+          </>)}
           
-          {/* Mobile menu button */}
           {isMobile && (
             <div className="-mr-2 flex items-center md:hidden">
               <button
@@ -237,7 +216,6 @@ const NavigationBarAuth = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {isMobile && isMenuOpen && (
           <motion.div
@@ -276,17 +254,26 @@ const NavigationBarAuth = () => {
                 Wiadomości
               </Link>
               <Link
-                to="/comments"
+                to="/yourAds"
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive('/comments') ? 'text-main-color bg-gray-50' : 'text-gray-700 hover:text-main-color hover:bg-gray-50'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Komentarze
+                Twoje Ogłoszenia
               </Link>
-              
-              {isLoggedIn && (
-                <>
+              <div  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className={`flex space-x-3 px-3 py-2 rounded-md text-base font-medium cursor-pointer hover:text-main-color`}>
+                <span>{userName || "Uzytkownik"} </span><span className="material-icons">keyboard_arrow_down</span>
+              </div>
+                <AnimatePresence>
+                {isUserMenuOpen&& ( 
+                  <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={menuVariants}
+            className="md:hidden bg-white border-t border-gray-100"
+          >
                   <div className="border-t border-gray-100 my-2"></div>
                   <Link
                     to="/profile"
@@ -304,15 +291,18 @@ const NavigationBarAuth = () => {
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50"
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50 cursor-pointer"
                   >
                     Wyloguj się
                   </button>
-                </>
-              )}
+              </motion.div>
+            )}
+            </AnimatePresence>
             </div>
+            
           </motion.div>
         )}
+        
       </AnimatePresence>
     </nav>
   );

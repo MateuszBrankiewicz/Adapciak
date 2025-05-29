@@ -52,8 +52,38 @@ const adsAddSchema = z.object({
     //     phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
     // }),
 });
+// Schema do edycji profilu (bez hasła)
+const editProfileSchema = z.object({
+    firstName: z.string().min(1, "Imie jest wymagane"),
+    lastName: z.string().min(1,"Nazwisko jest wymagane"),
+    phone: z.string().min(9,"Podaj poprawny numer telefonu(bez kierunkowego)").max(9,"Podaj poprawny numer telefonu(bez kierunkowego)"),
+    voivodeship: z.string().min(1, "Wojewodztwo jest wymagane"),
+    city: z.string().min(1,"Miasto jest wymagane"),
+});
+
+// Schema do zmiany hasła
+const changePasswordSchema = z.object({
+    currentPassword: z
+        .string()
+        .min(1, "Aktualne hasło jest wymagane."),
+    newPassword: z
+        .string()
+        .min(6, "Nowe hasło musi mieć co najmniej 6 znaków.")
+        .max(32, "Hasło może mieć maksymalnie 32 znaki."),
+    confirmNewPassword: z
+        .string()
+        .min(1, "Potwierdzenie nowego hasła jest wymagane.")
+        .max(32, "Hasło może mieć maksymalnie 32 znaki."),
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Nowe hasła nie są takie same",
+    path: ["confirmNewPassword"],
+});
+
 type AdsAddSchema = z.infer<typeof adsAddSchema>;
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
 type RegisterFormSchema = z.infer<typeof registerFormSchema>;
-export { loginFormSchema , registerFormSchema, adsAddSchema};
-export type { LoginFormSchema,  RegisterFormSchema, AdsAddSchema };
+type EditProfileSchema = z.infer<typeof editProfileSchema>;
+type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
+
+export { loginFormSchema , registerFormSchema, adsAddSchema, editProfileSchema, changePasswordSchema};
+export type { LoginFormSchema,  RegisterFormSchema, AdsAddSchema, EditProfileSchema, ChangePasswordSchema };

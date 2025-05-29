@@ -41,11 +41,9 @@ const FavoriteButton = ({ adId, userId }: FavoriteButtonProps ) => {
         } else {
             addToFavorites({ userId, ad: adId }, {
                 onSuccess: () => {
-                    // Odświeżamy dane po dodaniu do ulubionych
                     queryClient.invalidateQueries({ queryKey: ['checkFavorite', adId] });
                     queryClient.invalidateQueries({ queryKey: ['favorite'] });
                     
-                    // Dodaj powiadomienie o sukcesie
                     const successEvent = new CustomEvent('showNotification', { 
                       detail: { 
                         message: 'Dodano do ulubionych!',
@@ -57,7 +55,6 @@ const FavoriteButton = ({ adId, userId }: FavoriteButtonProps ) => {
                 onError: (error) => {
                     console.error("Błąd dodawania do ulubionych:", error);
                     
-                    // Dodaj powiadomienie o błędzie
               const errorEvent = new CustomEvent('showNotification', { 
                       detail: { 
                         message: 'Wystąpił błąd podczas dodawania do ulubionych',
@@ -71,7 +68,7 @@ const FavoriteButton = ({ adId, userId }: FavoriteButtonProps ) => {
     }
                     return (
     <Button 
-      size="big" 
+      size="normal" 
       style="secondary" 
       text={isFavorite as boolean === true ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
       onClick={toggleFavorite}

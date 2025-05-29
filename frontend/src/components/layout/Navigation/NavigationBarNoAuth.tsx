@@ -48,34 +48,17 @@ const NavigationBarNoAuth = () => {
           <Link 
             to="/ads" 
             className={`hover:border-b-2 hover:border-main-color hover:transition hover:ease-linear ${
-              isActive('/ads') ? 'border-b-2 border-main-color' : ''
+              isActive('/ads') ? 'text-main-color font-semibold' : ''
             }`}
           >
             Znajdź zwierzątko
           </Link>
           
-          <Link 
-            to="/how-it-works" 
-            className={`hover:border-b-2 hover:border-main-color hover:transition hover:ease-linear ${
-              isActive('/how-it-works') ? 'border-b-2 border-main-color' : ''
-            }`}
-          >
-            Jak to działa?
-          </Link>
           
-          <Link 
-            to="/about" 
-            className={`hover:border-b-2 hover:border-main-color hover:transition hover:ease-linear ${
-              isActive('/about') ? 'border-b-2 border-main-color' : ''
-            }`}
-          >
-            O nas
-          </Link>
         </div>
         
         {/* Search and Login/Register */}
         <div className="flex space-x-4 items-center">
-          <Link to="/search" className="material-icons">search</Link>
           
           {/* Login/Register buttons */}
           <div className="hidden md:flex space-x-4 items-center">

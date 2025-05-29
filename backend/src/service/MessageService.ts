@@ -92,12 +92,10 @@ async function setReaded(messageId:string) {
         );
         const tryToFindMessage = await Message.findById(messageId);
         
-        // Sprawdzamy czy dokument w ogóle istnieje
         if (message.matchedCount === 0 || !tryToFindMessage) {
             return { status: 404, data: { error: "Nie znaleziono wiadomości" } };
         }
         
-        // Dokument istnieje, ale możliwe że pole read już było ustawione na true
         return { status: 200, data: { message: "Wiadomość oznaczona jako przeczytana" } };
     } catch (error) {
         console.log("error", error);

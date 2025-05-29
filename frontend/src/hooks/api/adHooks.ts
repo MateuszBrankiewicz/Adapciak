@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Ad } from "../../types/models/adTypes";
 const fetchAd = async (id: string): Promise<Ad> => {
-    const response = await axios.get<Ad>(`http://localhost:3000/ads/${id}`);
-    return response.data;
+    const response = await axios.get(`http://localhost:3000/ads/${id}`);
+    return response.data as Ad; // Backend zwraca dane bezpośrednio w message
   };
 export const useAd = (id: string) => {
     return useQuery<Ad>({
@@ -99,8 +99,8 @@ export const usePostFavorite = () => {
 }
 
 const fetchUserAds = async (): Promise<Ad[]> => {
-  const response = await axios.get<Ad[]>(`http://localhost:3000/ads/user`, {withCredentials: true});
-  return response.data;
+  const response = await axios.get(`http://localhost:3000/ads/user`, {withCredentials: true});
+  return response.data as Ad[];
 };
 
 export const useUserAds = () => {

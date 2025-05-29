@@ -30,44 +30,44 @@ export interface AdFilterParams {
 }
 
 // Tworzenie nowego ogłoszenia
-export const handleCreateAd = async (req: Request): Promise<{ message: string; adId: string }> => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    throw new Error(`Błędy walidacji: ${JSON.stringify(errors.array())}`);
-  }
-
-  const { title, description, note, images, pet, age, size, voivodeship, city, number } = req.body;
-  const userId = await getUserId(req.cookies.token);
-
-  if (!userId) {
-    throw new Error('Nie jesteś zalogowany');
-  }
-
-  const newAd = new Ad({
-    title,
-    description,
-    note,
-    userId,
-    images,
-    pet,
-    age,
-    size,
-    voivodeship,
-    city,
-    number,
-  });
-
+export const handleCreateAd = async (req: Request): Promise<{ status: number; message: any }> => {
   try {
-    await newAd.save();
-    return { message: "Ogłoszenie dodane", adId: newAd._id?.toString() || "" };
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return { status: 400, message: `Błędy walidacji: ${JSON.stringify(errors.array())}` };
+    }
+
+    const { title, description, note, images, pet, age, size, voivodeship, city, number } = req.body;
+    const userId = await getUserId(req.cookies.token);
+
+    if (!userId) {
+      return { status: 401, message: 'Nie jesteś zalogowany' };
+    }
+
+    const newAd = new Ad({
+      title,
+      description,
+      note,
+      userId,
+      images,
+      pet,
+      age,
+      size,
+      voivodeship,
+      city,
+      number,
+    });
+
+    const savedAd = await newAd.save();
+    return { status: 201, message: { message: "Ogłoszenie dodane", adId: savedAd._id?.toString() || "" } };
   } catch (error) {
     console.log("error", error);
-    throw new Error("Nie udało się dodać ogłoszenia");
+    return { status: 500, message: "Nie udało się dodać ogłoszenia" };
   }
 };
 
 // Pobieranie ogłoszeń z paginacją
-export const handleGetAds = async (page: number = 1, limit: number = 2): Promise<PaginatedAdsResponse> => {
+export const handleGetAds = async (page: number = 1, limit: number = 2): Promise<{ status: number; message: any }> => {
   try {
     const skip = (page - 1) * limit;
 
@@ -79,7 +79,7 @@ export const handleGetAds = async (page: number = 1, limit: number = 2): Promise
 
     const totalPages = Math.ceil(totalAds / limit);
 
-    return {
+    const result: PaginatedAdsResponse = {
       ads,
       pagination: {
         currentPage: page,
@@ -90,32 +90,34 @@ export const handleGetAds = async (page: number = 1, limit: number = 2): Promise
         limit
       }
     };
+
+    return { status: 200, message: result };
   } catch (error) {
-    throw new Error("Nie udało się pobrać ogłoszeń");
+    return { status: 500, message: "Nie udało się pobrać ogłoszeń" };
   }
 };
 
 // Pobieranie pojedynczego ogłoszenia
-export const handleGetSingleAd = async (id: string) => {
+export const handleGetSingleAd = async (id: string): Promise<{ status: number; message: any }> => {
   try {
     const singleAd = await Ad.findOne({ _id: id });
     
     if (!singleAd) {
-      throw new Error("Ogłoszenie nie zostało znalezione");
+      return { status: 404, message: "Ogłoszenie nie zostało znalezione" };
     }
 
     singleAd.views += 1;
     await singleAd.save();
 
-    return singleAd;
+    return { status: 200, message: singleAd };
   } catch (error) {
     console.error(error);
-    throw new Error("Nie udało się pobrać ogłoszenia");
+    return { status: 500, message: "Nie udało się pobrać ogłoszenia" };
   }
 };
 
 // Filtrowanie i wyszukiwanie ogłoszeń
-export const handleFilterSearch = async (filters: AdFilterParams): Promise<PaginatedAdsResponse> => {
+export const handleFilterSearch = async (filters: AdFilterParams): Promise<{ status: number; message: any }> => {
   try {
     const filter: any = {};
     const pageNum = parseInt(filters.page || '1') || 1;
@@ -144,7 +146,7 @@ export const handleFilterSearch = async (filters: AdFilterParams): Promise<Pagin
 
     const totalPages = Math.ceil(totalAds / limitNum);
 
-    return {
+    const result: PaginatedAdsResponse = {
       ads,
       pagination: {
         currentPage: pageNum,
@@ -155,51 +157,53 @@ export const handleFilterSearch = async (filters: AdFilterParams): Promise<Pagin
         limit: limitNum
       }
     };
+
+    return { status: 200, message: result };
   } catch (error) {
     console.error(error);
-    throw new Error("Nie udało się wyszukać ogłoszeń");
+    return { status: 500, message: "Nie udało się wyszukać ogłoszeń" };
   }
 };
 
 // Pobieranie ogłoszeń użytkownika
-export const handleGetUserAds = async (req: Request) => {
+export const handleGetUserAds = async (req: Request): Promise<{ status: number; message: any }> => {
   try {
     const userId = await getUserId(req.cookies.token);
     
     if (!userId) {
-      throw new Error("Nie jesteś zalogowany");
+      return { status: 401, message: "Nie jesteś zalogowany" };
     }
 
     const ads = await Ad.find({ userId }).sort({ createdAt: -1 });
-    return ads;
+    return { status: 200, message: ads };
   } catch (error) {
     console.error(error);
-    throw new Error("Nie udało się pobrać ogłoszeń użytkownika");
+    return { status: 500, message: "Nie udało się pobrać ogłoszeń użytkownika" };
   }
 };
 
 // Aktualizacja ogłoszenia
-export const handleUpdateAd = async (req: Request, id: string): Promise<{ message: string; ad: any }> => {
+export const handleUpdateAd = async (req: Request, id: string): Promise<{ status: number; message: any }> => {
   try {
     const userId = await getUserId(req.cookies.token);
 
     if (!userId) {
-      throw new Error("Nie jesteś zalogowany");
+      return { status: 401, message: "Nie jesteś zalogowany" };
     }
 
     // Sprawdź czy ogłoszenie należy do użytkownika
     const existingAd = await Ad.findById(id);
     if (!existingAd) {
-      throw new Error("Ogłoszenie nie zostało znalezione");
+      return { status: 404, message: "Ogłoszenie nie zostało znalezione" };
     }
 
     if (existingAd.userId.toString() !== userId) {
-      throw new Error("Nie masz uprawnień do edycji tego ogłoszenia");
+      return { status: 403, message: "Nie masz uprawnień do edycji tego ogłoszenia" };
     }
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new Error(`Błędy walidacji: ${JSON.stringify(errors.array())}`);
+      return { status: 400, message: `Błędy walidacji: ${JSON.stringify(errors.array())}` };
     }
 
     const { title, description, note, images, pet, age, size, voivodeship, city, number } = req.body;
@@ -222,12 +226,34 @@ export const handleUpdateAd = async (req: Request, id: string): Promise<{ messag
       { new: true }
     );
 
-    return { message: "Ogłoszenie zaktualizowane", ad: updatedAd };
+    return { status: 200, message: { message: "Ogłoszenie zaktualizowane", ad: updatedAd } };
   } catch (error) {
     console.error("Error updating ad:", error);
-    if (error instanceof Error) {
-      throw error;
+    return { status: 500, message: "Nie udało się zaktualizować ogłoszenia" };
+  }
+};
+export const handleDeleteAd = async (req: Request, id: string): Promise<{ status: number; message: any }> => {
+  try {
+    const userId = await getUserId(req.cookies.token);
+
+    if (!userId) {
+      return { status: 401, message: "Nie jesteś zalogowany" };
     }
-    throw new Error("Nie udało się zaktualizować ogłoszenia");
+
+    // Sprawdź czy ogłoszenie istnieje i należy do użytkownika
+    const existingAd = await Ad.findById(id);
+    if (!existingAd) {
+      return { status: 404, message: "Ogłoszenie nie zostało znalezione" };
+    }
+
+    if (existingAd.userId.toString() !== userId) {
+      return { status: 403, message: "Nie masz uprawnień do usunięcia tego ogłoszenia" };
+    }
+
+    const deletedAd = await Ad.findByIdAndDelete(id);
+    return { status: 200, message: { message: "Ogłoszenie zostało usunięte", ad: deletedAd } };
+  } catch (error) {
+    console.error("Error deleting ad:", error);
+    return { status: 500, message: "Nie udało się usunąć ogłoszenia" };
   }
 };

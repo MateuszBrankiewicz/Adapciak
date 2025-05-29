@@ -158,7 +158,7 @@ const RegisterPage = () => {
                                         </div>
                                     </div>
                                     
-                                    <Button type='submit' style='primary' size='normal' text='Zarejestruj się' />
+                                    <Button type='submit' style='primary' size='big' text='Zarejestruj się' />
                                 </>
                             )}
                         </Form>

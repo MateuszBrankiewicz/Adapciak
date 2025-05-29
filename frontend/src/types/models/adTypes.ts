@@ -21,6 +21,7 @@ export interface ImageData {
         note: string;
          views: number;
         createdAt: string;
+        adId? :string;     
     }
 
     export interface PaginationInfo {

@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import cookieParser from "cookie-parser";
 import { auth } from "./service/AuthService";
 import cors from "cors";
-import {Router} from 'express';
+import userRoutes from './routes/userRoutes';
 import authRoutes from './routes/authRoutes';
 import adRoutes from './routes/adRoutes';
 import formFillersRoutes from './routes/formFillersRoutes';
@@ -34,5 +34,5 @@ app.use('/ads', adRoutes);
 app.use('/formFillers', formFillersRoutes);
 app.use('/message', auth, messageRoutes);
 app.use('/favorite',auth,favoriteRoutes);
-
+app.use('/userprofile',userRoutes);
 export default app;
