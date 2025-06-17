@@ -52,7 +52,7 @@ export const useAdsFilters = (): UseAdsFiltersReturn => {
         setIsLoading(true);
         try {
             const response = await axios.get(`http://localhost:3000/ads?page=${page}`);
-            const data = response.data as PaginatedAdsResponse; // Backend zwraca dane bezpośrednio w message
+            const data = response.data as PaginatedAdsResponse; 
             setData(data.ads);
             setPagination(data.pagination);
         } catch (error) {
